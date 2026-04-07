@@ -104,7 +104,6 @@ $suppliers = $stmt->fetchAll();
                     </td>
                     <td class="p-4 border-b text-center space-x-3">
                         <a href="../actions/edit_supplier.php?id=<?= $s['supplier_id'] ?>" class="text-blue-600 hover:text-blue-800">Edit</a>
-                        <a href="../actions/delete_supplier.php?id=<?= $s['supplier_id'] ?>" onclick="return confirm(...)">Delete</a>
                         <button onclick="openDeleteModal('../actions/delete_supplier.php?id=<?= $s['supplier_id'] ?>')"
                             class="text-red-500 hover:text-red-700 font-medium">
                             Delete
