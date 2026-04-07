@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'config/db.php';
+require 'db.php'; 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $user = $_POST['username'];
@@ -17,10 +17,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (password_verify($pass, $user_data['password'])) {
         $_SESSION['user_id'] = $user_data['user_id'];
         $_SESSION['role'] = $user_data['role'];
+
         header("Location: ../modules/dashboard.php");
         exit();
     } else {
-        die("Error: Password check failed. The hash in the DB does not match 'admin123'.");
+        die("Error: Password check failed.");
     }
 }
 ?>
