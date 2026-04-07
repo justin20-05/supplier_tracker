@@ -3,7 +3,7 @@ require '../config/db.php';
 include '../includes/header.php'; 
 
 $id = $_GET['id'] ?? null;
-if (!$id) { header("Location: product_list.php"); exit(); }
+if (!$id) { header("Location: ../modules/product_list.php"); exit(); }
 
 // 1. Fetch current product data
 $stmt = $pdo->prepare("SELECT * FROM products WHERE product_id = ?");
