@@ -1,12 +1,12 @@
 <?php
-require 'config/db.php';
-include 'includes/header.php';
+require '../config/db.php'; 
+include '../includes/header.php'; 
 
 $id = $_GET['id'] ?? null;
 $message = "";
 
 if (!$id) {
-    header("Location: supplier_list.php");
+    header("Location: ../modules/supplier_list.php");
     exit();
 }
 
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow">
     <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-bold text-gray-800">Edit Supplier</h2>
-        <a href="supplier_list.php" class="text-gray-500 hover:underline">Cancel</a>
+        <a href="../modules/supplier_list.php" class="text-gray-500 hover:underline">Cancel</a>
     </div>
 
     <?= $message ?>

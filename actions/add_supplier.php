@@ -17,6 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 VALUES (?, ?, ?, ?, ?)";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$name, $contact, $email, $phone, $category]);
+
+        header("Location: ../modules/supplier_list.php?msg=added");
+        exit();
         
         $message = "<div class='bg-green-100 text-green-700 p-3 rounded mb-4'>Supplier added successfully!</div>";
     } catch (PDOException $e) {

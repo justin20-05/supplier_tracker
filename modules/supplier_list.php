@@ -77,7 +77,7 @@ $suppliers = $stmt->fetchAll();
 
         <div class="flex items-end gap-2">
             <button type="submit" class="flex-1 bg-gray-800 text-white py-2 rounded hover:bg-gray-700 transition text-sm font-bold">Apply</button>
-            <a href="supplier_list.php" class="flex-1 bg-gray-100 text-gray-600 py-2 rounded hover:bg-gray-200 transition text-sm font-bold text-center">Reset</a>
+            <a href="../modules/supplier_list.php" class="flex-1 bg-gray-100 text-gray-600 py-2 rounded hover:bg-gray-200 transition text-sm font-bold text-center">Reset</a>
         </div>
     </div>
 </form>
@@ -103,7 +103,7 @@ $suppliers = $stmt->fetchAll();
                         </span>
                     </td>
                     <td class="p-4 border-b text-center space-x-3">
-                        <a href="edit_supplier.php?id=<?= $s['supplier_id'] ?>" class="text-blue-600 hover:text-blue-800">Edit</a>
+                        <a href="../actions/edit_supplier.php?id=<?= $s['supplier_id'] ?>" class="text-blue-600 hover:text-blue-800">Edit</a>
                         <a href="../actions/delete_supplier.php?id=<?= $s['supplier_id'] ?>" onclick="return confirm(...)">Delete</a>
                         <button onclick="openDeleteModal('../actions/delete_supplier.php?id=<?= $s['supplier_id'] ?>')"
                             class="text-red-500 hover:text-red-700 font-medium">
