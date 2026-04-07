@@ -1,5 +1,5 @@
-<?php 
-require '../config/db.php';
+<?php
+require '../config/db.php';   
 include '../includes/header.php';
 
 $search = $_GET['search'] ?? '';

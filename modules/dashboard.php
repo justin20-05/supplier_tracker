@@ -1,6 +1,6 @@
 <?php
-require '../config/db.php';
-include '../includes/header.php';
+require '../config/db.php';   
+include '../includes/header.php'; 
 
 // Fetch counts for the Dashboard cards
 $suppliersCount = $pdo->query("SELECT COUNT(*) FROM suppliers")->fetchColumn();

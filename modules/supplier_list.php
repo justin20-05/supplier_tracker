@@ -1,6 +1,6 @@
 <?php
-require '../config/db.php';
-include '../includes/header.php';
+require '../config/db.php';    
+include '../includes/header.php'; 
 
 // Get filter values from the URL
 $search   = $_GET['search'] ?? '';
