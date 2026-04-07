@@ -21,7 +21,7 @@ if ($id) {
         die("Error deleting product: " . $e->getMessage());
     }
 } else {
-    header("Location: ../modules/product_list.php?msg=deleted");
+    header("Location: ../modules/product_list.php"); 
     exit();
 }
 ?>

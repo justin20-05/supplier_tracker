@@ -1,6 +1,6 @@
 <?php
-require '../config/db.php';
-include '../includes/header.php';
+require '../config/db.php'; 
+include '../includes/header.php'; 
 
 $id = $_GET['id'] ?? null;
 if (!$id) { header("Location: product_list.php"); exit(); }
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_POST['unit_price'], $_POST['supplier_id'], $id
         ]);
         
-        header("Location: product_list.php?msg=updated");
+        header("Location: ../modules/product_list.php?msg=updated");
         exit();
     } catch (PDOException $e) {
         $error = "Update failed: " . ($e->getCode() == 23000 ? "SKU already exists." : $e->getMessage());
@@ -36,8 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <div class="max-w-xl mx-auto bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
     <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-bold text-gray-800">Edit Product</h2>
-        <a href="product_list.php" class="text-gray-400 hover:text-gray-600 text-sm">Cancel</a>
-    </div>
+        <a href="../modules/product_list.php" class="text-gray-400 hover:text-gray-600 text-sm">Cancel</a>
     
     <?php if(isset($error)): ?>
         <div class="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-xs font-bold uppercase tracking-tight"><?= $error ?></div>
