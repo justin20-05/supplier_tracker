@@ -75,7 +75,7 @@ $all_cats = $pdo->query("SELECT * FROM categories ORDER BY category_name ASC")->
             </div>
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Phone Number</label>
-                <input type="text" name="phone" placeholder="+63 000 000 0000" 
+                <input type="text" name="phone" placeholder="0900-123-4567" 
                        class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
             </div>
         </div>
