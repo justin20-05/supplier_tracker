@@ -37,12 +37,24 @@ $stmt->execute($params);
 $suppliers = $stmt->fetchAll();
 ?>
 
-<div class="flex justify-between items-center mb-6">
-    <h2 class="text-2xl font-bold text-gray-800">Suppliers</h2>
-    <a href="../actions/add_category.php" class="bg-gray-100 text-gray-600 px-5 py-2 rounded-lg hover:bg-gray-200 transition font-medium border border-gray-200">
-        + Add Category
-    </a>
-    <a href="../actions/add_supplier.php" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition">+ Add Supplier</a>
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+    <div>
+        <h2 class="text-3xl font-black text-gray-900 tracking-tight">Suppliers</h2>
+        <p class="text-gray-500 text-sm">Manage your delivery network and categories</p>
+    </div>
+    
+    <div class="flex items-center gap-3">
+        <a href="../actions/add_category.php" 
+           class="flex items-center justify-center px-5 py-3 bg-white border border-gray-200 text-gray-600 rounded-2xl font-bold text-sm hover:bg-gray-50 transition-all shadow-sm">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+            Add Category
+        </a>
+        <a href="../actions/add_supplier.php" 
+           class="flex items-center justify-center px-5 py-3 bg-blue-600 text-white rounded-2xl font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-200">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+            Add Supplier
+        </a>
+    </div>
 </div>
 
 <form method="GET" action="supplier_list.php" class="bg-white p-4 rounded-lg shadow-sm border mb-6">
