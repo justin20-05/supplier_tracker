@@ -23,3 +23,6 @@ Implement the Dashboard using the CTE/Subqueries. Add CSS/Tailwind for a profess
 
 - add function to the logout
 - fix the login for the staffs
+
+- add analytics to the dashboard
+- add toast message for each action
