@@ -41,7 +41,6 @@ $orders = $pdo->query($query)->fetchAll();
                     <td class="p-4">
                         <?php
                             $status = $o['status'];
-                            $colorClasses = "bg-gray-100 text-gray-700"; 
                             if ($status == 'Pending') $colorClasses = "bg-yellow-100 text-yellow-700";
                             if ($status == 'Received') $colorClasses = "bg-green-100 text-green-700";
                             if ($status == 'Cancelled') $colorClasses = "bg-red-100 text-red-700";
