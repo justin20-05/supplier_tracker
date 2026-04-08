@@ -35,7 +35,7 @@ $products = $stmt->fetchAll();
     <div class="flex-1">
         <label class="block text-xs font-semibold text-gray-500 uppercase mb-1 ml-1">Search Products</label>
         <input type="text" name="search" value="<?= htmlspecialchars($search) ?>" 
-               placeholder="Search by name or SKU..." 
+               placeholder="Search by name or Stock Keeping Unit (SKU)..." 
                class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all">
     </div>
     <div class="flex items-end gap-2">

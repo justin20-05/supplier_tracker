@@ -83,7 +83,7 @@ $supplierTotalsJSON = json_encode($supplierTotals);
 
     <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Registration Growth</h3>
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Monthly Product Growth</h3>
             <span id="trendIndicator" class="px-2 py-1 rounded-lg text-[10px] font-black italic uppercase"></span>
         </div>
         <canvas id="productsChart" height="200"></canvas>
