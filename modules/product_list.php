@@ -8,7 +8,7 @@ $search = $_GET['search'] ?? '';
 $query = "SELECT p.*, s.name as supplier_name 
           FROM products p 
           LEFT JOIN suppliers s ON p.supplier_id = s.supplier_id 
-          WHERE p.product_name LIKE ? OR p.sku LIKE ? 
+          WHERE p.product_name LIKE ? OR p.product_code LIKE ? 
           ORDER BY p.product_name ASC";
 
 $stmt = $pdo->prepare($query);
@@ -35,7 +35,7 @@ $products = $stmt->fetchAll();
     <div class="flex-1">
         <label class="block text-xs font-semibold text-gray-500 uppercase mb-1 ml-1">Search Products</label>
         <input type="text" name="search" value="<?= htmlspecialchars($search) ?>" 
-               placeholder="Search by name or Stock Keeping Unit (SKU)..." 
+               placeholder="Search by name or Product Code..." 
                class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all">
     </div>
     <div class="flex items-end gap-2">
@@ -50,7 +50,7 @@ $products = $stmt->fetchAll();
     <table class="w-full text-left border-collapse">
         <thead>
             <tr class="bg-gray-50 text-gray-600 uppercase text-[11px] font-bold tracking-widest">
-                <th class="p-4 border-b">SKU</th>
+                <th class="p-4 border-b">Product Code</th>
                 <th class="p-4 border-b">Product Name</th>
                 <th class="p-4 border-b">Supplier</th>
                 <th class="p-4 border-b">Price</th>
@@ -60,7 +60,7 @@ $products = $stmt->fetchAll();
         <tbody class="text-sm">
             <?php foreach ($products as $p): ?>
             <tr class="hover:bg-blue-50/30 transition border-b border-gray-50 last:border-0">
-                <td class="p-4 font-mono text-blue-600 font-bold"><?= htmlspecialchars($p['sku']) ?></td>
+                <td class="p-4 font-mono text-blue-600 font-bold"><?= htmlspecialchars($p['product_code']) ?></td>
                 <td class="p-4 font-semibold text-gray-800"><?= htmlspecialchars($p['product_name']) ?></td>
                 <td class="p-4">
                     <span class="px-2 py-1 rounded-full text-[10px] font-bold uppercase bg-gray-100 text-gray-600">

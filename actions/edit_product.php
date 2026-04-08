@@ -18,17 +18,17 @@ $suppliers = $pdo->query("SELECT supplier_id, name FROM suppliers ORDER BY name 
 // 3. Handle the Update
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
-        $sql = "UPDATE products SET sku=?, product_name=?, unit_price=?, supplier_id=? WHERE product_id=?";
+        $sql = "UPDATE products SET product_code=?, product_name=?, unit_price=?, supplier_id=? WHERE product_id=?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
-            $_POST['sku'], $_POST['product_name'], 
+            $_POST['product_code'], $_POST['product_name'], 
             $_POST['unit_price'], $_POST['supplier_id'], $id
         ]);
         
         header("Location: ../modules/product_list.php?msg=updated");
         exit();
     } catch (PDOException $e) {
-        $error = "Update failed: " . ($e->getCode() == 23000 ? "SKU already exists." : $e->getMessage());
+        $error = "Update failed: " . ($e->getCode() == 23000 ? "Product code already exists." : $e->getMessage());
     }
 }
 ?>
@@ -44,8 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <form method="POST" class="space-y-5">
         <div>
-            <label class="block text-[10px] font-black text-gray-400 uppercase mb-1">SKU (Unique ID)</label>
-            <input type="text" name="sku" value="<?= htmlspecialchars($product['sku']) ?>" required 
+            <label class="block text-[10px] font-black text-gray-400 uppercase mb-1">Product Code</label>
+            <input type="text" name="product_code" value="<?= htmlspecialchars($product['product_code']) ?>" required 
                    class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-mono text-blue-600">
         </div>
 

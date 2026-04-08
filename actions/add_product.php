@@ -6,18 +6,18 @@ include '../includes/header.php';
 $suppliers = $pdo->query("SELECT supplier_id, name FROM suppliers ORDER BY name ASC")->fetchAll();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $sku = $_POST['sku'];
+    $product_code = $_POST['product_code'];
     $name = $_POST['product_name'];
     $price = $_POST['unit_price'];
     $s_id = $_POST['supplier_id'];
 
     try {
-        $stmt = $pdo->prepare("INSERT INTO products (sku, product_name, unit_price, supplier_id) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$sku, $name, $price, $s_id]);
+        $stmt = $pdo->prepare("INSERT INTO products (product_code, product_name, unit_price, supplier_id) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$product_code, $name, $price, $s_id]);
         header("Location: ../modules/product_list.php?msg=added");
         exit();
     } catch (PDOException $e) {
-        $error = "Error: " . ($e->getCode() == 23000 ? "SKU must be unique." : $e->getMessage());
+        $error = "Error: " . ($e->getCode() == 23000 ? "Product code must be unique." : $e->getMessage());
     }
 }
 ?>
@@ -31,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <form method="POST" class="space-y-5">
         <div>
-            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Stock Keeping Unit (SKU)</label>
-            <input type="text" name="sku" placeholder="e.g. ELEC-LAP-001" required 
+            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Product Code</label>
+            <input type="text" name="product_code" placeholder="e.g. ELEC-LAP-001" required 
                    class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
         </div>
 
