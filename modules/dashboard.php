@@ -133,7 +133,7 @@ const percentChange = <?= $percentJSON ?>;
 const sNames = <?= $supplierNamesJSON ?>;
 const sTotals = <?= $supplierTotalsJSON ?>;
 
-// 1. PRODUCTS GROWTH CHART (Line)
+// 1. PRODUCTS GROWTH CHART (Line) - Range 0 to 100
 const trendColor = percentChange >= 0 ? '#3b82f6' : '#ef4444';
 const trendIndicator = document.getElementById('trendIndicator');
 trendIndicator.innerHTML = (percentChange >= 0 ? '▲ +' : '▼ ') + percentChange + '% Growth';
@@ -159,13 +159,19 @@ new Chart(document.getElementById('productsChart'), {
         responsive: true,
         plugins: { legend: { display: false } },
         scales: {
-            y: { beginAtZero: true, grid: { display: false }, ticks: { stepSize: 1 } },
+            y: { 
+                beginAtZero: true, 
+                min: 0,             // Minimum value
+                max: 100,           // Updated Range to 100
+                grid: { display: false }, 
+                ticks: { stepSize: 20 } 
+            },
             x: { grid: { display: false } }
         }
     }
 });
 
-// 2. SUPPLIER DISTRIBUTION CHART (Bar)
+// 2. SUPPLIER DISTRIBUTION CHART (Bar) - Range 0 to 50
 new Chart(document.getElementById('supplierChart'), {
     type: 'bar',
     data: {
@@ -181,7 +187,13 @@ new Chart(document.getElementById('supplierChart'), {
         responsive: true,
         plugins: { legend: { display: false } },
         scales: {
-            y: { beginAtZero: true, grid: { display: false } },
+            y: { 
+                beginAtZero: true, 
+                min: 0,             // Minimum value
+                max: 50,            // Updated Range to 50
+                grid: { display: false },
+                ticks: { stepSize: 10 }
+            },
             x: { grid: { display: false } }
         }
     }
