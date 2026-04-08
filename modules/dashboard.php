@@ -21,17 +21,37 @@ $productsPerSupplier = $pdo->query("
 ")->fetchAll();
 
 // Products added per day (last 7 days)
+// Products added per day (last 8 days to compare)
 $productsPerDay = $pdo->query("
     SELECT DATE(created_at) as date, COUNT(*) as total
     FROM products
-    WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+    WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 8 DAY)
     GROUP BY DATE(created_at)
     ORDER BY date ASC
 ")->fetchAll();
 
+$dates = array_column($productsPerDay, 'date');
+$totals = array_column($productsPerDay, 'total');
+
+// Get last 2 days for comparison
+$latest = end($totals);
+$previous = prev($totals);
+
+// Prevent division by zero
+$percentChange = 0;
+if ($previous > 0) {
+    $percentChange = (($latest - $previous) / $previous) * 100;
+}
+
+// Send to JS
+$datesJSON = json_encode($dates);
+$totalsJSON = json_encode($totals);
+$percentJSON = json_encode(round($percentChange, 2));
+
 // Convert to JSON for charts
 $supplierNames = json_encode(array_column($productsPerSupplier, 'name'));
 $supplierTotals = json_encode(array_column($productsPerSupplier, 'total'));
+
 
 $dates = json_encode(array_column($productsPerDay, 'date'));
 $totals = json_encode(array_column($productsPerDay, 'total'));
@@ -119,33 +139,25 @@ $totals = json_encode(array_column($productsPerDay, 'total'));
 <!-- CHART.JS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<div class="flex items-center justify-between mb-2">
+    <h3 class="font-bold text-gray-700">Products Added (Last 7 Days)</h3>
+    <span id="trendIndicator" class="text-sm font-bold"></span>
+</div>
+
 <script>
-const supplierNames = <?= $supplierNames ?>;
-const supplierTotals = <?= $supplierTotals ?>;
+const dates = <?= $datesJSON ?>;
+const totals = <?= $totalsJSON ?>;
+const percentChange = <?= $percentJSON ?>;
 
-const dates = <?= $dates ?>;
-const totals = <?= $totals ?>;
+// Dynamic color based on trend
+const trendColor = percentChange >= 0 ? '#10B981' : '#EF4444';
 
-// Bar Chart
-new Chart(document.getElementById('supplierChart'), {
-    type: 'bar',
-    data: {
-        labels: supplierNames,
-        datasets: [{
-            label: 'Products',
-            data: supplierTotals,
-            backgroundColor: '#3B82F6'
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: { display: false }
-        }
-    }
-});
+// Update UI text
+const trendText = document.getElementById('trendIndicator');
+trendText.innerHTML = (percentChange >= 0 ? '▲ ' : '▼ ') + percentChange + '%';
+trendText.classList.add(percentChange >= 0 ? 'text-green-500' : 'text-red-500');
 
-// Line Chart
+// Interactive Line Chart
 new Chart(document.getElementById('productsChart'), {
     type: 'line',
     data: {
@@ -153,13 +165,34 @@ new Chart(document.getElementById('productsChart'), {
         datasets: [{
             label: 'Products Added',
             data: totals,
-            borderColor: '#10B981',
-            tension: 0.3,
-            fill: false
+            borderColor: trendColor,
+            backgroundColor: trendColor + '33',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 5,
+            pointHoverRadius: 7
         }]
     },
     options: {
-        responsive: true
+        responsive: true,
+        interaction: {
+            mode: 'index',
+            intersect: false
+        },
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return ' ' + context.raw + ' products';
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
     }
 });
 </script>
