@@ -45,9 +45,6 @@ $orders = $pdo->query($query)->fetchAll();
                             <?= $o['status'] ?>
                         </span>
                     </td>
-                    <td class="p-4 text-center">
-                        <a href="view_order.php?id=<?= $o['order_id'] ?>" class="text-blue-600 font-bold text-[10px] uppercase tracking-wider">View Items</a>
-                    </td>
                     <td class="p-4 text-center space-x-3">
                         <a href="../actions/edit_order.php?id=<?= $o['order_id'] ?>"
                             class="text-blue-600 font-bold text-[10px] uppercase tracking-wider">Edit</a>
