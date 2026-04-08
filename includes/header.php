@@ -22,7 +22,8 @@ if (!isset($_SESSION['user_id'])) {
                 <nav class="space-x-6 text-gray-600">
                     <a href="../modules/dashboard.php" class="hover:text-blue-600">Dashboard</a>
                     <a href="../modules/supplier_list.php" class="hover:text-blue-600">Suppliers</a>
-                    <a href="../modules/product_list.php" class="hover:text-blue-600">Products</a> <a href="../actions/logout.php" class="text-red-500">Logout</a>
+                    <a href="../modules/product_list.php" class="hover:text-blue-600">Products</a> 
+                    <a href="../modules/logout.php" class="text-red-500">Logout</a>
                 </nav>
             </div>
         </div>
