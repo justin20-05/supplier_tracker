@@ -38,9 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Current Status</label>
                 <select name="status" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer">
-                    <option value="Pending" <?= $order['status'] == 'Pending' ? 'selected' : '' ?>>Pending</option>
-                    <option value="Received" <?= $order['status'] == 'Received' ? 'selected' : '' ?>>Received</option>
-                    <option value="Cancelled" <?= $order['status'] == 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                    <option value="pending" <?= $order['status'] == 'pending' ? 'selected' : '' ?>>Pending</option>
+                    <option value="received" <?= $order['status'] == 'received' ? 'selected' : '' ?>>Received</option>
+                    <option value="cancelled" <?= $order['status'] == 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
                 </select>
             </div>
             <div class="flex gap-4 pt-4">

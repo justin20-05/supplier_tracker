@@ -40,18 +40,20 @@ $orders = $pdo->query($query)->fetchAll();
                     <td class="p-4 text-gray-500"><?= date('M d, Y', strtotime($o['expected_date'])) ?></td>
                     <td class="p-4">
     <?php
-        $status = $o['status'];
+        $status = strtolower($o['status']); 
+        
         $colorClasses = "bg-gray-100 text-gray-700"; 
-        if ($status == 'Pending') {
+        
+        if ($status == 'pending') {
             $colorClasses = "bg-yellow-100 text-yellow-700";
-        } elseif ($status == 'Received') {
+        } elseif ($status == 'received') {
             $colorClasses = "bg-green-100 text-green-700";
-        } elseif ($status == 'Cancelled') {
+        } elseif ($status == 'cancelled') {
             $colorClasses = "bg-red-100 text-red-700";
         }
     ?>
     <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase <?= $colorClasses ?>">
-        <?= htmlspecialchars($status) ?>
+        <?= htmlspecialchars($o['status']) ?>
     </span>
 </td>
                     <td class="p-4 text-center space-x-3">
