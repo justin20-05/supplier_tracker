@@ -26,6 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <form method="POST" class="space-y-4 mt-4">
         <div>
+            <a href="../modules/supplier_list.php" class="text-sm font-bold text-blue-600 hover:text-blue-800 transition">← Back to List</a>
+            </div>
             <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Category Name</label>
             <input type="text" name="category_name" placeholder="e.g. Packaging, Chemicals" 
                    class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none" required>
