@@ -1,6 +1,6 @@
 <?php
-require '../config/db.php'; 
-include '../includes/header.php'; 
+require '../config/db.php';
+include '../includes/header.php';
 
 $id = $_GET['id'] ?? null;
 $message = "";
@@ -15,6 +15,8 @@ $stmt = $pdo->prepare("SELECT * FROM suppliers WHERE supplier_id = ?");
 $stmt->execute([$id]);
 $supplier = $stmt->fetch();
 
+$all_cats = $pdo->query("SELECT * FROM categories ORDER BY category_name ASC")->fetchAll();
+
 if (!$supplier) {
     die("Supplier not found.");
 }
@@ -26,11 +28,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 WHERE supplier_id=?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
-            $_POST['name'], $_POST['contact_person'], 
-            $_POST['email'], $_POST['phone'], 
-            $_POST['category'], $id
+            $_POST['name'],
+            $_POST['contact_person'],
+            $_POST['email'],
+            $_POST['phone'],
+            $_POST['category'],
+            $id
         ]);
-        
+
         $message = "<div class='bg-blue-100 text-blue-700 p-3 rounded mb-4'>Changes saved successfully!</div>";
         $stmt = $pdo->prepare("SELECT * FROM suppliers WHERE supplier_id = ?");
         $stmt->execute([$id]);
@@ -52,26 +57,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <form method="POST" class="space-y-4">
         <div>
             <label class="block text-sm font-medium text-gray-700">Vendor Name</label>
-            <input type="text" name="name" value="<?= htmlspecialchars($supplier['name']) ?>" required 
-                   class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none">
+            <input type="text" name="name" value="<?= htmlspecialchars($supplier['name']) ?>" required
+                class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none">
         </div>
-        
+
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700">Contact Person</label>
-                <input type="text" name="contact_person" value="<?= htmlspecialchars($supplier['contact_person']) ?>" 
-                       class="w-full p-2 border rounded outline-none">
+                <input type="text" name="contact_person" value="<?= htmlspecialchars($supplier['contact_person']) ?>"
+                    class="w-full p-2 border rounded outline-none">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700">Category</label>
-                <select name="category" class="w-full p-2 border rounded outline-none bg-white">
-                    <?php 
-                    $cats = ["Electronics", "Office Stationery", "Logistics", "Raw Materials"];
-                    foreach($cats as $cat) {
-                        $selected = ($supplier['category'] == $cat) ? "selected" : "";
-                        echo "<option value='$cat' $selected>$cat</option>";
-                    }
-                    ?>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Category</label>
+                <select name="category" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer">
+                    <?php foreach ($all_cats as $cat): ?>
+                        <option value="<?= htmlspecialchars($cat['category_name']) ?>"
+                            <?= ($supplier['category'] == $cat['category_name']) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($cat['category_name']) ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
             </div>
         </div>
@@ -79,13 +83,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700">Email</label>
-                <input type="email" name="email" value="<?= htmlspecialchars($supplier['email']) ?>" required 
-                       class="w-full p-2 border rounded outline-none">
+                <input type="email" name="email" value="<?= htmlspecialchars($supplier['email']) ?>" required
+                    class="w-full p-2 border rounded outline-none">
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700">Phone</label>
-                <input type="text" name="phone" value="<?= htmlspecialchars($supplier['phone']) ?>" 
-                       class="w-full p-2 border rounded outline-none">
+                <input type="text" name="phone" value="<?= htmlspecialchars($supplier['phone']) ?>"
+                    class="w-full p-2 border rounded outline-none">
             </div>
         </div>
 

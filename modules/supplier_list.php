@@ -1,6 +1,6 @@
 <?php
-require '../config/db.php';    
-include '../includes/header.php'; 
+require '../config/db.php';
+include '../includes/header.php';
 
 // Get filter values from the URL
 $search   = $_GET['search'] ?? '';
@@ -39,6 +39,9 @@ $suppliers = $stmt->fetchAll();
 
 <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-bold text-gray-800">Suppliers</h2>
+    <a href="../actions/add_category.php" class="bg-gray-100 text-gray-600 px-5 py-2 rounded-lg hover:bg-gray-200 transition font-medium border border-gray-200">
+        + Add Category
+    </a>
     <a href="../actions/add_supplier.php" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition">+ Add Supplier</a>
 </div>
 

@@ -21,58 +21,71 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: ../modules/supplier_list.php?msg=added");
         exit();
         
-        $message = "<div class='bg-green-100 text-green-700 p-3 rounded mb-4'>Supplier added successfully!</div>";
     } catch (PDOException $e) {
-        $message = "<div class='bg-red-100 text-red-700 p-3 rounded mb-4'>Error: " . $e->getMessage() . "</div>";
+        $message = "<div class='bg-red-100 text-red-700 p-3 rounded mb-4 font-bold'>Error: " . $e->getMessage() . "</div>";
     }
 }
+
+$all_cats = $pdo->query("SELECT * FROM categories ORDER BY category_name ASC")->fetchAll();
 ?>
 
-<div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow">
-    <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">Add New Supplier</h2>
-        <a href="../modules/supplier_list.php" class="text-blue-600 hover:underline">← Back to List</a>
+<div class="max-w-2xl mx-auto bg-white p-8 rounded-3xl shadow-sm border border-gray-100 mt-6">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h2 class="text-2xl font-black text-gray-800 tracking-tight">Add New Supplier</h2>
+            <p class="text-xs text-gray-400 font-medium">Register a new delivery partner</p>
+        </div>
+        <a href="../modules/supplier_list.php" class="text-sm font-bold text-blue-600 hover:text-blue-800 transition">← Back to List</a>
     </div>
 
     <?= $message ?>
 
-    <form method="POST" class="space-y-4">
+    <form method="POST" class="space-y-6">
         <div>
-            <label class="block text-sm font-medium text-gray-700">Vendor Name</label>
-            <input type="text" name="name" required class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none">
+            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Vendor Name</label>
+            <input type="text" name="name" placeholder="Legal Business Name" required 
+                   class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
         </div>
         
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label class="block text-sm font-medium text-gray-700">Contact Person</label>
-                <input type="text" name="contact_person" class="w-full p-2 border rounded outline-none">
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Contact Person</label>
+                <input type="text" name="contact_person" placeholder="Full Name" 
+                       class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700">Category</label>
-                <select name="category" class="w-full p-2 border rounded outline-none bg-white">
-                    <option value="Electronics">Electronics</option>
-                    <option value="Office Stationery">Office Stationery</option>
-                    <option value="Logistics">Logistics</option>
-                    <option value="Raw Materials">Raw Materials</option>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Category</label>
+                <select name="category" required 
+                        class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer">
+                    <option value="" disabled selected>Select a category</option>
+                    <?php foreach($all_cats as $cat): ?>
+                        <option value="<?= htmlspecialchars($cat['category_name']) ?>">
+                            <?= htmlspecialchars($cat['category_name']) ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label class="block text-sm font-medium text-gray-700">Email</label>
-                <input type="email" name="email" required class="w-full p-2 border rounded outline-none">
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Email Address</label>
+                <input type="email" name="email" placeholder="vendor@example.com" required 
+                       class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700">Phone</label>
-                <input type="text" name="phone" class="w-full p-2 border rounded outline-none">
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Phone Number</label>
+                <input type="text" name="phone" placeholder="+63 000 000 0000" 
+                       class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
             </div>
         </div>
 
-        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 transition">
-            Save Supplier
-        </button>
+        <div class="pt-4">
+            <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold text-lg shadow-lg shadow-blue-100 hover:bg-blue-700 transform hover:-translate-y-0.5 transition-all active:scale-[0.98]">
+                Save Supplier Profile
+            </button>
+        </div>
     </form>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; // Fixed path ?>
