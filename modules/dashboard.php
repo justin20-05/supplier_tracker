@@ -12,7 +12,7 @@ $recentProducts = $pdo->query("SELECT p.product_name, s.name as supplier_name
                                LEFT JOIN suppliers s ON p.supplier_id = s.supplier_id 
                                ORDER BY p.product_id DESC LIMIT 5")->fetchAll();
 
-// 1. Products per supplier (Fixed Query for Bar Chart)
+// 1. Products per supplier (Bar Chart Data)
 $productsPerSupplier = $pdo->query("
     SELECT s.name, COUNT(p.product_id) as total
     FROM suppliers s
@@ -20,32 +20,35 @@ $productsPerSupplier = $pdo->query("
     GROUP BY s.supplier_id
 ")->fetchAll();
 
-$supplierNames = array_column($productsPerSupplier, 'name');
-$supplierTotals = array_column($productsPerSupplier, 'total');
+$supplierNamesJSON = json_encode(array_column($productsPerSupplier, 'name'));
+$supplierTotalsJSON = json_encode(array_column($productsPerSupplier, 'total'));
 
-// 2. Products added per day (Fixed Query for Line Chart)
-$productsPerDay = $pdo->query("
-    SELECT DATE(created_at) as date, COUNT(*) as total
-    FROM products
-    WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-    GROUP BY DATE(created_at)
-    ORDER BY date ASC
+// 2. Generate all 12 Months for the current year (Line Chart Data)
+$currentYear = date('Y');
+$monthlyData = [];
+
+for ($m = 1; $m <= 12; $m++) {
+    $monthName = date('M', mktime(0, 0, 0, $m, 1));
+    $monthlyData[$m] = [
+        'label' => "$monthName $currentYear",
+        'total' => 0
+    ];
+}
+
+// Fetch actual product counts per month for this year
+$results = $pdo->query("
+    SELECT MONTH(created_at) as m, COUNT(*) as total 
+    FROM products 
+    WHERE YEAR(created_at) = YEAR(CURDATE()) 
+    GROUP BY MONTH(created_at)
 ")->fetchAll();
 
-$dates = array_column($productsPerDay, 'date');
-$totals = array_column($productsPerDay, 'total');
+foreach ($results as $row) {
+    $monthlyData[(int)$row['m']]['total'] = (int)$row['total'];
+}
 
-// Calculate Trend Comparison
-$latest = end($totals) ?: 0;
-$previous = prev($totals) ?: 0;
-$percentChange = ($previous > 0) ? (($latest - $previous) / $previous) * 100 : 0;
-
-// Pass clean JSON to Javascript
-$datesJSON = json_encode($dates);
-$totalsJSON = json_encode($totals);
-$percentJSON = json_encode(round($percentChange, 1));
-$supplierNamesJSON = json_encode($supplierNames);
-$supplierTotalsJSON = json_encode($supplierTotals);
+$monthsJSON = json_encode(array_column($monthlyData, 'label'));
+$monthTotalsJSON = json_encode(array_column($monthlyData, 'total'));
 ?>
 
 <div class="mb-8">
@@ -83,8 +86,8 @@ $supplierTotalsJSON = json_encode($supplierTotals);
 
     <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Monthly Product Growth</h3>
-            <span id="trendIndicator" class="px-2 py-1 rounded-lg text-[10px] font-black italic uppercase"></span>
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Product Growth (<?= $currentYear ?>)</h3>
+            <span class="px-2 py-1 rounded-lg text-[10px] font-black bg-blue-50 text-blue-600 uppercase">Annual View</span>
         </div>
         <canvas id="productsChart" height="200"></canvas>
     </div>
@@ -118,7 +121,7 @@ $supplierTotalsJSON = json_encode($supplierTotals);
         </div>
         <h3 class="font-black text-xl text-gray-900 mb-2">Secure Access</h3>
         <p class="text-gray-500 text-sm mb-6 leading-relaxed">Manager privileges active. You can full inventory records.</p>
-        <a href="../modules/product_list.php" class="inline-block bg-gray-50 text-blue-600 py-3 rounded-xl font-bold hover:bg-blue-50 transition-all border border-blue-100">
+        <a href="../modules/product_list.php" class="inline-block bg-gray-50 text-blue-600 py-3 rounded-xl font-bold hover:bg-blue-50 transition-all border border-blue-100 px-6">
             View Full Inventory
         </a>
     </div>
@@ -126,58 +129,60 @@ $supplierTotalsJSON = json_encode($supplierTotals);
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// Data from PHP
-const dates = <?= $datesJSON ?>;
-const totals = <?= $totalsJSON ?>;
-const percentChange = <?= $percentJSON ?>;
-const sNames = <?= $supplierNamesJSON ?>;
-const sTotals = <?= $supplierTotalsJSON ?>;
-
-// 1. PRODUCTS GROWTH CHART (Line) - Range 0 to 100
-const trendColor = percentChange >= 0 ? '#3b82f6' : '#ef4444';
-const trendIndicator = document.getElementById('trendIndicator');
-trendIndicator.innerHTML = (percentChange >= 0 ? '▲ +' : '▼ ') + percentChange + '% Growth';
-trendIndicator.classList.add(percentChange >= 0 ? 'text-blue-600' : 'text-red-600');
-trendIndicator.classList.add(percentChange >= 0 ? 'bg-blue-50' : 'bg-red-50');
-
+// 1. PRODUCT GROWTH CHART (Line) - Scale 0 to 100
 new Chart(document.getElementById('productsChart'), {
     type: 'line',
     data: {
-        labels: dates,
+        labels: <?= $monthsJSON ?>, 
         datasets: [{
-            label: 'New Products',
-            data: totals,
-            borderColor: trendColor,
-            backgroundColor: 'transparent',
+            label: 'Products Added',
+            data: <?= $monthTotalsJSON ?>,
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
             pointBackgroundColor: '#fff',
             pointBorderWidth: 3,
             tension: 0.4,
-            fill: false
+            fill: true
         }]
     },
     options: {
         responsive: true,
-        plugins: { legend: { display: false } },
+        plugins: { 
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return ' ' + context.raw + ' Products Registered';
+                    }
+                }
+            }
+        },
         scales: {
             y: { 
                 beginAtZero: true, 
-                min: 0,             // Minimum value
-                max: 100,           // Updated Range to 100
+                min: 0, 
+                max: 100, 
                 grid: { display: false }, 
                 ticks: { stepSize: 20 } 
             },
-            x: { grid: { display: false } }
+            x: { 
+                grid: { display: false },
+                ticks: { 
+                    font: { weight: 'bold', size: 9 },
+                    autoSkip: false
+                }
+            }
         }
     }
 });
 
-// 2. SUPPLIER DISTRIBUTION CHART (Bar) - Range 0 to 50
+// 2. SUPPLIER DISTRIBUTION CHART (Bar) - Scale 0 to 50
 new Chart(document.getElementById('supplierChart'), {
     type: 'bar',
     data: {
-        labels: sNames,
+        labels: <?= $supplierNamesJSON ?>,
         datasets: [{
-            data: sTotals,
+            data: <?= $supplierTotalsJSON ?>,
             backgroundColor: '#818cf8',
             borderRadius: 8,
             barThickness: 20
@@ -189,8 +194,8 @@ new Chart(document.getElementById('supplierChart'), {
         scales: {
             y: { 
                 beginAtZero: true, 
-                min: 0,             // Minimum value
-                max: 50,            // Updated Range to 50
+                min: 0, 
+                max: 50, 
                 grid: { display: false },
                 ticks: { stepSize: 10 }
             },
