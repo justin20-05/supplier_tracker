@@ -6,7 +6,7 @@ include '../includes/header.php';
 $suppliersCount = $pdo->query("SELECT COUNT(*) FROM suppliers")->fetchColumn();
 $productsCount = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
 
-//  Pulling from the correct table name 'delivery_orders'
+// Pulling from delivery_orders table
 $ordersCount = $pdo->query("SELECT COUNT(*) FROM delivery_orders")->fetchColumn();
 
 $recentProducts = $pdo->query("SELECT p.product_name, s.name as supplier_name 
@@ -58,29 +58,33 @@ $monthTotalsJSON = json_encode(array_column($monthlyData, 'total'));
     </header>
 
     <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon icon-blue">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-10V4a1 1 0 011-1h2a1 1 0 011 1v3M12 21v-3a1 1 0 011-1h2a1 1 0 011 1v3" />
-                </svg>
+        <a href="../modules/supplier_list.php" style="text-decoration: none; color: inherit;">
+            <div class="stat-card hover:bg-gray-50 transition-all">
+                <div class="stat-icon icon-blue">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-10V4a1 1 0 011-1h2a1 1 0 011 1v3M12 21v-3a1 1 0 011-1h2a1 1 0 011 1v3" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="stat-label">Total Suppliers</p>
+                    <h2 class="stat-value"><?= $suppliersCount ?></h2>
+                </div>
             </div>
-            <div>
-                <p class="stat-label">Total Suppliers</p>
-                <h2 class="stat-value"><?= $suppliersCount ?></h2>
-            </div>
-        </div>
+        </a>
 
-        <div class="stat-card">
-            <div class="stat-icon icon-green">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
+        <a href="../modules/product_list.php" style="text-decoration: none; color: inherit;">
+            <div class="stat-card hover:bg-gray-50 transition-all">
+                <div class="stat-icon icon-green">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="stat-label">Total Products</p>
+                    <h2 class="stat-value"><?= $productsCount ?></h2>
+                </div>
             </div>
-            <div>
-                <p class="stat-label">Total Products</p>
-                <h2 class="stat-value"><?= $productsCount ?></h2>
-            </div>
-        </div>
+        </a>
 
         <a href="../modules/order_list.php" style="text-decoration: none; color: inherit;">
             <div class="stat-card hover:bg-gray-50 transition-all">
@@ -134,7 +138,7 @@ $monthTotalsJSON = json_encode(array_column($monthlyData, 'total'));
                     <thead>
                         <tr>
                             <th>Product Detail</th>
-                            <th class="text-right">Status</th>
+                            <th class="text-right" style="text-align: right; padding-right: 2rem;">Status</th>
                         </tr>
                     </thead>
                     <tbody>
