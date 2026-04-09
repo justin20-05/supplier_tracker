@@ -55,13 +55,13 @@ if (typeof window.toastInitialized === 'undefined') {
                     showToast('Record updated successfully!', 'success'); 
                     break;
                 case 'deleted': 
-                    showToast('Record removed successfully!', 'error'); 
+                    showToast('Record removed successfully!', 'success'); 
+                    break;
+                case 'cat_deleted': 
+                    showToast('Category removed successfully!', 'success'); 
                     break;
                 case 'error': 
                     showToast('Something went wrong.', 'error'); 
-                    break;
-                case 'cat_deleted': 
-                    showToast('Category removed successfully!', 'error'); 
                     break;
                 case 'warning': 
                     showToast('Please check your input.', 'warning'); 
