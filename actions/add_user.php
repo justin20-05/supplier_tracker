@@ -1,11 +1,16 @@
 <?php
 require '../config/db.php';
-include '../includes/header.php';
+if (session_status() === PHP_SESSION_NONE) session_start();
 
-if ($_SESSION['role'] !== 'Admin') { header("Location: ../modules/dashboard.php"); exit(); }
+// 1. Access Control: Redirect before ANY HTML is sent
+if ($_SESSION['role'] !== 'Admin') { 
+    header("Location: ../modules/dashboard.php"); 
+    exit(); 
+}
 
 $message = "";
 
+// 2. Handle Form Submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = trim($_POST['username']);
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
@@ -15,31 +20,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         $stmt = $pdo->prepare("INSERT INTO users (username, password, full_name, role) VALUES (?, ?, ?, ?)");
         $stmt->execute([$username, $password, $full_name, $role]);
+        
+        // Success redirect
         header("Location: ../modules/user_management.php?msg=user_added");
         exit();
     } catch (PDOException $e) {
-        $message = "<div class='bg-red-100 text-red-700 p-4 rounded-2xl mb-6'>Username already exists.</div>";
+        $message = "<div class='bg-red-100 text-red-700 p-4 rounded-2xl mb-6 font-bold'>Username already exists.</div>";
     }
 }
+
+// 3. Now safe to include HTML
+include '../includes/header.php';
 ?>
 
 <div class="max-w-xl mx-auto mt-10">
+    <div class="mb-6">
+        <a href="../modules/user_management.php" class="text-sm font-bold text-gray-400 hover:text-blue-600 transition flex items-center">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Users
+        </a>
+    </div>
+
     <div class="bg-white p-10 rounded-3xl shadow-sm border border-gray-100">
         <h2 class="text-3xl font-black text-gray-900 mb-6 tracking-tight">New User Account</h2>
         <?= $message ?>
         <form method="POST" class="space-y-6">
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Full Name</label>
-                <input type="text" name="full_name" required class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                <input type="text" name="full_name" required placeholder="John Doe" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
             </div>
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Username</label>
-                <input type="text" name="username" required class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                <input type="text" name="username" required placeholder="johndoe123" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Password</label>
-                    <input type="password" name="password" required class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                    <input type="password" name="password" required placeholder="••••••••" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Role</label>

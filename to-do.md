@@ -23,4 +23,5 @@ Implement the Dashboard using the CTE/Subqueries. Add CSS/Tailwind for a profess
 
 - fix the login for the staffs
 - add toast message for each action
-- add confimation modal for logout
+- add filter for products, filter by supplier
+- add filter for orders, filter by supplier and status
