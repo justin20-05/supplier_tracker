@@ -3,7 +3,7 @@
 - create database
 - login
 Setup XAMPP, create the 5 tables, build the Login/Session logic in PHP.
-- add data for all tables**not done**
+- add data for all tables 
 
 **Tasks for Week 2**
 
@@ -21,8 +21,5 @@ Build the Order Entry and Tracking modules.
 Implement the Dashboard using the CTE/Subqueries. Add CSS/Tailwind for a professional look.
 
 
-- add function to the logout
 - fix the login for the staffs
-
-- add analytics to the dashboard
 - add toast message for each action
