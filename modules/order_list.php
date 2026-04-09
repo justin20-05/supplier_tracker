@@ -2,7 +2,6 @@
 require '../config/db.php';
 include '../includes/header.php';
 
-// --- FILTER HANDLING ---
 $supplier_filter = $_GET['supplier_id'] ?? '';
 $status_filter   = $_GET['status'] ?? '';
 
@@ -12,7 +11,6 @@ $suppliers = $pdo->query("SELECT supplier_id, name FROM suppliers ORDER BY name 
 // Fetch unique statuses for the dropdown
 $statuses = $pdo->query("SELECT DISTINCT status FROM delivery_orders ORDER BY status ASC")->fetchAll(PDO::FETCH_COLUMN);
 
-// --- DYNAMIC QUERY BUILDING ---
 $query = "SELECT o.*, s.name as supplier_name, u.username as creator_name,
           COUNT(oi.item_id) as unique_products,
           SUM(oi.quantity) as total_quantity,
@@ -35,7 +33,7 @@ if ($status_filter) {
     $params[] = $status_filter;
 }
 
-$query .= " GROUP BY o.order_id ORDER BY o.expected_date ASC";
+$query .= " GROUP BY o.order_id ORDER BY o.order_id DESC";
 
 $stmt = $pdo->prepare($query);
 $stmt->execute($params);
