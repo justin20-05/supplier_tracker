@@ -8,6 +8,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Supplier Tracker</title>
@@ -17,6 +18,33 @@ $current_page = basename($_SERVER['PHP_SELF']);
 </head>
 
 <body class="bg-gray-50">
+    <div id="logoutModal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
+
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm p-6">
+            <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+                <div class="p-8 text-center">
+                    <div class="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-black text-gray-900 mb-2 tracking-tight">End Session?</h3>
+                    <p class="text-gray-500 text-sm font-medium mb-8">Are you sure you want to log out?</p>
+
+                    <div class="flex gap-3">
+                        <button onclick="toggleLogoutModal()" class="flex-1 py-4 text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors uppercase tracking-widest">
+                            Cancel
+                        </button>
+                        <a href="../modules/logout.php" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-4 rounded-2xl text-sm font-bold shadow-lg shadow-red-200 transition-all uppercase tracking-widest text-center">
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <nav class="bg-white shadow-sm mb-8 border-b border-gray-100">
         <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
 
@@ -83,14 +111,22 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
                 <div class="h-8 w-[1px] bg-gray-100 hidden sm:block mx-1"></div>
 
-                <a href="../modules/logout.php"
+                <button type="button" onclick="toggleLogoutModal()"
                     class="bg-red-50 hover:bg-red-100 text-red-600 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-red-100 flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
                     Logout
-                </a>
+                </button>
             </div>
         </div>
     </nav>
+
+    <script>
+        function toggleLogoutModal() {
+            const modal = document.getElementById('logoutModal');
+            modal.classList.toggle('hidden');
+        }
+    </script>
+
     <main class="max-w-6xl mx-auto px-4">
