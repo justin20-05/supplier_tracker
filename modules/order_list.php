@@ -49,7 +49,8 @@ $hasFilters = $supplier_filter || $status_filter;
     </div>
     <a href="../actions/add_order.php"
         class="flex items-center justify-center px-5 py-3 bg-blue-600 text-white rounded-2xl font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-200">
-        + New Order
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        New Order
     </a>
 </div>
 
@@ -135,11 +136,21 @@ $hasFilters = $supplier_filter || $status_filter;
                             <?= htmlspecialchars($o['status']) ?>
                         </span>
                     </td>
-                    <td class="p-4 text-center space-x-3">
-                        <a href="../actions/edit_order.php?id=<?= $o['order_id'] ?>"
-                            class="text-blue-600 font-bold text-[10px] uppercase tracking-wider hover:underline">Edit</a>
-                        <button onclick="openDeleteModal('../actions/delete_order.php?id=<?= $o['order_id'] ?>')"
-                            class="text-red-400 font-bold text-[10px] uppercase tracking-wider hover:text-red-600 transition-colors">Delete</button>
+                    <td class="p-4 text-center">
+                        <div class="flex justify-center items-center gap-2">
+                            <a href="../actions/edit_order.php?id=<?= $o['order_id'] ?>"
+                                class="p-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-600 hover:text-white transition-all shadow-sm" title="Edit">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                            </a>
+                            <button onclick="openDeleteModal('../actions/delete_order.php?id=<?= $o['order_id'] ?>')"
+                                class="p-2 text-red-500 bg-red-50 rounded-lg hover:bg-red-600 hover:text-white transition-all shadow-sm" title="Delete">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -164,15 +175,15 @@ $hasFilters = $supplier_filter || $status_filter;
     </div>
 </div>
 
-<div id="deleteModal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center">
-    <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full mx-4 text-center">
+<div id="deleteModal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center">
         <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
             </svg>
         </div>
         <h3 class="text-xl font-black text-gray-900">Remove Order?</h3>
-        <p class="text-gray-500 mt-2 text-sm">This will permanently delete this order.</p>
+        <p class="text-gray-500 mt-2 text-sm">This action cannot be undone. This will permanently delete this order record.</p>
         <div class="flex gap-3 mt-8">
             <button onclick="closeDeleteModal()" class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-2xl font-bold hover:bg-gray-200 transition">Cancel</button>
             <a id="confirmDeleteBtn" href="#" class="flex-1 px-4 py-3 bg-red-600 text-white text-center rounded-2xl font-bold hover:bg-red-700 transition">Delete</a>
@@ -212,10 +223,12 @@ $hasFilters = $supplier_filter || $status_filter;
     }
 
     function closeItemsModal() { document.getElementById('itemsModal').classList.add('hidden'); }
+    
     function openDeleteModal(url) {
         document.getElementById('confirmDeleteBtn').href = url;
         document.getElementById('deleteModal').classList.remove('hidden');
     }
+    
     function closeDeleteModal() { document.getElementById('deleteModal').classList.add('hidden'); }
 </script>
 
