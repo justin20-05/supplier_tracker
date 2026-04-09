@@ -15,6 +15,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/header-style.css">
+    <script src="../javascript/toast.js"></script>
 </head>
 
 <body class="bg-gray-50">

@@ -16,30 +16,6 @@ $msg = $_GET['msg'] ?? '';
 $err = $_GET['err'] ?? '';
 ?>
 
-<div id="toast-container" class="fixed top-24 right-8 z-[110] flex flex-col gap-4 pointer-events-none">
-    <?php if ($msg == 'deleted'): ?>
-        <div class="alert-msg pointer-events-auto bg-gray-900 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-gray-700 min-w-[300px]">
-            <div class="w-2 h-2 rounded-full bg-red-500"></div>
-            <span class="text-sm font-bold">User removed successfully</span>
-        </div>
-    <?php elseif ($msg == 'updated'): ?>
-        <div class="alert-msg pointer-events-auto bg-gray-900 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-gray-700 min-w-[300px]">
-            <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-            <span class="text-sm font-bold">Account details updated</span>
-        </div>
-    <?php elseif ($msg == 'user_added'): ?>
-        <div class="alert-msg pointer-events-auto bg-gray-900 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-gray-700 min-w-[300px]">
-            <div class="w-2 h-2 rounded-full bg-green-500"></div>
-            <span class="text-sm font-bold">New user created</span>
-        </div>
-    <?php elseif ($err == 'self_delete'): ?>
-        <div class="alert-msg pointer-events-auto bg-red-600 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 min-w-[300px]">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-            <span class="text-sm font-bold">Cannot delete your own account</span>
-        </div>
-    <?php endif; ?>
-</div>
-
 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
     <div>
         <h2 class="text-3xl font-black text-gray-900 tracking-tight">User Management</h2>
@@ -136,27 +112,6 @@ $err = $_GET['err'] ?? '';
 </div>
 
 <script>
-    // Handles the Auto-Dismissing Overlay (Toast)
-    document.addEventListener('DOMContentLoaded', function() {
-        const alerts = document.querySelectorAll('.alert-msg');
-        alerts.forEach(alert => {
-            alert.style.transition = "all 0.6s cubic-bezier(0.16, 1, 0.3, 1)";
-            alert.style.transform = "translateX(20px)";
-            alert.style.opacity = "0";
-            
-            requestAnimationFrame(() => {
-                alert.style.transform = "translateX(0)";
-                alert.style.opacity = "1";
-            });
-
-            setTimeout(() => {
-                alert.style.transform = "translateX(100%)";
-                alert.style.opacity = "0";
-                setTimeout(() => alert.remove(), 600);
-            }, 2500);
-        });
-    });
-
     function openDeleteModal(id, name) {
         document.getElementById('deleteUserName').textContent = name;
         document.getElementById('confirmDeleteLink').href = "../actions/delete_user.php?id=" + id;

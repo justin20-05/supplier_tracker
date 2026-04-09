@@ -2,36 +2,38 @@
 require '../config/db.php';
 include '../includes/header.php';
 
-// Get filter values from the URL
 $search   = $_GET['search'] ?? '';
 $cat_filter = $_GET['category'] ?? '';
 $name_filter = $_GET['name'] ?? '';
+
+$hasFilters = $search || $cat_filter || $name_filter;
 
 // Fetch unique categories and names for the dropdown filters
 $categories = $pdo->query("SELECT DISTINCT category FROM suppliers ORDER BY category ASC")->fetchAll(PDO::FETCH_COLUMN);
 $names      = $pdo->query("SELECT DISTINCT name FROM suppliers ORDER BY name ASC")->fetchAll(PDO::FETCH_COLUMN);
 
-//  Dynamic Query
-$query = "SELECT * FROM suppliers WHERE 1=1";
+// Corrected Query: Uses alias 's', single ORDER BY, and sorts by newest first
+$query = "SELECT s.* FROM suppliers s WHERE 1=1";
 $params = [];
 
 if ($search) {
-    $query .= " AND (name LIKE ? OR category LIKE ?)";
+    $query .= " AND (s.name LIKE ? OR s.category LIKE ?)";
     $params[] = "%$search%";
     $params[] = "%$search%";
 }
 
 if ($cat_filter) {
-    $query .= " AND category = ?";
+    $query .= " AND s.category = ?";
     $params[] = $cat_filter;
 }
 
 if ($name_filter) {
-    $query .= " AND name = ?";
+    $query .= " AND s.name = ?";
     $params[] = $name_filter;
 }
 
-$query .= " ORDER BY name ASC";
+$query .= " GROUP BY s.supplier_id ORDER BY s.supplier_id DESC";
+
 $stmt = $pdo->prepare($query);
 $stmt->execute($params);
 $suppliers = $stmt->fetchAll();
@@ -59,16 +61,15 @@ $suppliers = $stmt->fetchAll();
 
 <form method="GET" action="supplier_list.php" class="bg-white p-4 rounded-lg shadow-sm border mb-6">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-
         <div>
-            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Keyword</label>
+            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1 ml-1">Keyword</label>
             <input type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Search..."
                 class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none text-sm">
         </div>
 
         <div>
-            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Vendor Name</label>
-            <select name="name" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-white">
+            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1 ml-1">Vendor Name</label>
+            <select name="name" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-white font-medium text-gray-700">
                 <option value="">All Vendors</option>
                 <?php foreach ($names as $n): ?>
                     <option value="<?= htmlspecialchars($n) ?>" <?= $name_filter == $n ? 'selected' : '' ?>>
@@ -79,8 +80,8 @@ $suppliers = $stmt->fetchAll();
         </div>
 
         <div>
-            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Category</label>
-            <select name="category" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-white">
+            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1 ml-1">Category</label>
+            <select name="category" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-white font-medium text-gray-700">
                 <option value="">All Categories</option>
                 <?php foreach ($categories as $cat): ?>
                     <option value="<?= htmlspecialchars($cat) ?>" <?= $cat_filter == $cat ? 'selected' : '' ?>>
@@ -91,16 +92,18 @@ $suppliers = $stmt->fetchAll();
         </div>
 
         <div class="flex items-end gap-2">
-            <button type="submit" class="flex-1 bg-gray-800 text-white py-2 rounded hover:bg-gray-700 transition text-sm font-bold">Apply</button>
-            <a href="../modules/supplier_list.php" class="flex-1 bg-gray-100 text-gray-600 py-2 rounded hover:bg-gray-200 transition text-sm font-bold text-center">Reset</a>
+            <button type="submit" class="flex-1 bg-gray-800 text-white py-2 rounded hover:bg-gray-700 transition text-sm font-bold">Apply Filter</button>
+            <?php if($hasFilters): ?>
+                <a href="supplier_list.php" class="flex-1 bg-gray-100 text-gray-600 py-2 rounded hover:bg-gray-200 transition text-sm font-bold text-center border">Reset</a>
+            <?php endif; ?>
         </div>
     </div>
 </form>
 
-<div class="bg-white rounded-lg shadow overflow-hidden">
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <table class="w-full text-left border-collapse">
         <thead>
-            <tr class="bg-gray-50 text-gray-600 uppercase text-xs font-bold">
+            <tr class="bg-gray-50 text-gray-600 uppercase text-[11px] font-bold tracking-widest">
                 <th class="p-4 border-b">Vendor Name</th>
                 <th class="p-4 border-b">Contact</th>
                 <th class="p-4 border-b">Category</th>
@@ -109,41 +112,53 @@ $suppliers = $stmt->fetchAll();
         </thead>
         <tbody class="text-sm">
             <?php foreach ($suppliers as $s): ?>
-                <tr class="hover:bg-blue-50/30 transition">
-                    <td class="p-4 border-b font-semibold text-gray-800"><?= htmlspecialchars($s['name']) ?></td>
-                    <td class="p-4 border-b text-gray-500"><?= htmlspecialchars($s['email']) ?></td>
-                    <td class="p-4 border-b">
+                <tr class="hover:bg-blue-50/30 transition border-b border-gray-50 last:border-0">
+                    <td class="p-4 font-semibold text-gray-800"><?= htmlspecialchars($s['name']) ?></td>
+                    <td class="p-4 text-gray-500"><?= htmlspecialchars($s['email']) ?></td>
+                    <td class="p-4">
                         <span class="px-2 py-1 rounded-full text-[10px] font-bold uppercase bg-gray-100 text-gray-600">
                             <?= htmlspecialchars($s['category']) ?>
                         </span>
                     </td>
-                    <td class="p-4 border-b text-center space-x-3">
-                        <a href="../actions/edit_supplier.php?id=<?= $s['supplier_id'] ?>" class="text-blue-600 hover:text-blue-800">Edit</a>
-                        <button onclick="openDeleteModal('../actions/delete_supplier.php?id=<?= $s['supplier_id'] ?>')"
-                            class="text-red-500 hover:text-red-700 font-medium">
-                            Delete
-                        </button>
+                    <td class="p-4 text-center">
+                        <div class="flex justify-center items-center gap-2">
+                            <a href="../actions/edit_supplier.php?id=<?= $s['supplier_id'] ?>" 
+                               class="p-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-600 hover:text-white transition-all shadow-sm" title="Edit">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                            </a>
+                            <button onclick="openDeleteModal('../actions/delete_supplier.php?id=<?= $s['supplier_id'] ?>')"
+                                    class="p-2 text-red-500 bg-red-50 rounded-lg hover:bg-red-600 hover:text-white transition-all shadow-sm" title="Delete">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>
+            <?php if (empty($suppliers)): ?>
+                <tr>
+                    <td colspan="4" class="p-12 text-center text-gray-400 italic font-medium">No suppliers match your criteria.</td>
+                </tr>
+            <?php endif; ?>
         </tbody>
     </table>
 </div>
 
-<div id="deleteModal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center">
-    <div class="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full mx-4 transform transition-all">
-        <div class="text-center">
-            <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                </svg>
-            </div>
-            <h3 class="text-lg font-bold text-gray-900">Confirm Deletion</h3>
-            <p class="text-gray-500 mt-2">Are you sure? This action cannot be undone and may affect linked products.</p>
+<div id="deleteModal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center">
+        <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
         </div>
-        <div class="flex gap-3 mt-6">
-            <button onclick="closeDeleteModal()" class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition">Cancel</button>
-            <a id="confirmDeleteBtn" href="#" class="flex-1 px-4 py-2 bg-red-600 text-white text-center rounded-lg font-medium hover:bg-red-700 transition">Delete</a>
+        <h3 class="text-xl font-black text-gray-900">Confirm Deletion</h3>
+        <p class="text-gray-500 mt-2 text-sm">Are you sure? This action cannot be undone and may affect linked products.</p>
+        <div class="flex gap-3 mt-8">
+            <button onclick="closeDeleteModal()" class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-2xl font-bold hover:bg-gray-200 transition">Cancel</button>
+            <a id="confirmDeleteBtn" href="#" class="flex-1 px-4 py-3 bg-red-600 text-white text-center rounded-2xl font-bold hover:bg-red-700 transition">Delete</a>
         </div>
     </div>
 </div>

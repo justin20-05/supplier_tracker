@@ -25,8 +25,8 @@ Implement the Dashboard using the CTE/Subqueries. Add CSS/Tailwind for a profess
 
 
 - fix the login for the staffs
+- make the actions (edit and delete) button an Icon
 - add toast message for each action
-- make filter layout consistent (suppliers)
 
 **ORDER MODULE**
 
