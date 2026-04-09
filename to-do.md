@@ -29,8 +29,6 @@ Implement the Dashboard using the CTE/Subqueries. Add CSS/Tailwind for a profess
 - make filter layout consistent (suppliers)
 
 **ORDER MODULE**
-- error in Add New Order
-- error in edit order
 
 **PRODUCT MODULE**
 
