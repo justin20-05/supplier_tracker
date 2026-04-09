@@ -1,3 +1,6 @@
+**DONE** 
+**NOT YET DONE**
+
 **Tasks for Week 1**
 
 - create database
@@ -34,6 +37,4 @@ Implement the Dashboard using the CTE/Subqueries. Add CSS/Tailwind for a profess
 - fix edit layout
 
 **SUPPLIERS MODULE**
-- fix edit layout
-- after save update edit supplier should redirect to Supplier Module again
-- error add new supplier 
+

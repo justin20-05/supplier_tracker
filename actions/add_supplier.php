@@ -1,11 +1,10 @@
 <?php
 require '../config/db.php';
-include '../includes/header.php';
 
+// 1. PLACE LOGIC AND REDIRECTS AT THE VERY TOP
 $message = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Collect and sanitize basic input
     $name = $_POST['name'];
     $contact = $_POST['contact_person'];
     $email = $_POST['email'];
@@ -18,15 +17,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$name, $contact, $email, $phone, $category]);
 
+        // Redirect works now because no HTML has been sent yet
         header("Location: ../modules/supplier_list.php?msg=added");
         exit();
         
     } catch (PDOException $e) {
-        $message = "<div class='bg-red-100 text-red-700 p-3 rounded mb-4 font-bold'>Error: " . $e->getMessage() . "</div>";
+        $message = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm'>Error: " . $e->getMessage() . "</div>";
     }
 }
 
+// 2. FETCH NECESSARY DATA
 $all_cats = $pdo->query("SELECT * FROM categories ORDER BY category_name ASC")->fetchAll();
+
+// 3. NOW INCLUDE THE HEADER (THIS STARTS THE HTML OUTPUT)
+include '../includes/header.php';
 ?>
 
 <div class="max-w-2xl mx-auto bg-white p-8 rounded-3xl shadow-sm border border-gray-100 mt-6">
@@ -88,4 +92,4 @@ $all_cats = $pdo->query("SELECT * FROM categories ORDER BY category_name ASC")->
     </form>
 </div>
 
-<?php include '../includes/footer.php'; // Fixed path ?>
+<?php include '../includes/footer.php'; ?>
