@@ -5,8 +5,6 @@ include '../includes/header.php';
 // --- DATA FETCHING ---
 $suppliersCount = $pdo->query("SELECT COUNT(*) FROM suppliers")->fetchColumn();
 $productsCount = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
-
-// Pulling from delivery_orders table
 $ordersCount = $pdo->query("SELECT COUNT(*) FROM delivery_orders")->fetchColumn();
 
 $recentProducts = $pdo->query("SELECT p.product_name, s.name as supplier_name 
@@ -35,20 +33,20 @@ $monthTotalsJSON = json_encode(array_column($monthlyData, 'total'));
 
 <link rel="stylesheet" href="../assets/dashboard-styles.css">
 
-<div class="dashboard-container">
-    <header class="dashboard-header">
+<div class="dashboard-container mt-6 px-8">
+    <header class="dashboard-header mb-8 flex justify-between items-end">
         <div>
-            <h1 class="page-title">System Overview</h1>
-            <p class="page-subtitle">Real-time logistics & inventory analytics</p>
+            <h1 class="page-title text-3xl font-black text-gray-900 tracking-tight">System Overview</h1>
+            <p class="page-subtitle text-gray-500 text-xs font-bold uppercase tracking-[0.2em]">Real-time logistics analytics</p>
         </div>
-        <div class="header-actions" style="display: flex; gap: 0.75rem;">
-            <a href="../actions/add_supplier.php" class="btn-primary" style="background-color: #1e293b;">
+        <div class="header-actions flex gap-4">
+            <a href="../actions/add_supplier.php" class="flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-slate-800 hover:-translate-y-1 active:scale-95 transition-all shadow-xl shadow-slate-200">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
                 Add Supplier
             </a>
-            <a href="../actions/add_product.php" class="btn-primary">
+            <a href="../actions/add_product.php" class="flex items-center gap-3 px-8 py-4 bg-blue-600 text-white rounded-2xl font-black text-sm hover:bg-blue-700 hover:-translate-y-1 active:scale-95 transition-all shadow-xl shadow-blue-200">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
                 </svg>
@@ -57,119 +55,108 @@ $monthTotalsJSON = json_encode(array_column($monthlyData, 'total'));
         </div>
     </header>
 
-    <div class="stats-grid">
-        <a href="../modules/supplier_list.php" style="text-decoration: none; color: inherit;">
-            <div class="stat-card hover:bg-gray-50 transition-all">
-                <div class="stat-icon icon-blue">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div class="stats-grid mb-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a href="../modules/supplier_list.php" class="group block">
+            <div class="stat-card p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm group-hover:shadow-2xl group-hover:shadow-blue-100 group-hover:-translate-y-2 transition-all duration-300 flex items-center gap-6">
+                <div class="stat-icon w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center transition-transform group-hover:scale-110">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-10V4a1 1 0 011-1h2a1 1 0 011 1v3M12 21v-3a1 1 0 011-1h2a1 1 0 011 1v3" />
                     </svg>
                 </div>
                 <div>
-                    <p class="stat-label">Total Suppliers</p>
-                    <h2 class="stat-value"><?= $suppliersCount ?></h2>
+                    <p class="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Total Suppliers</p>
+                    <h2 class="text-3xl font-black text-gray-900 tracking-tighter"><?= $suppliersCount ?></h2>
                 </div>
             </div>
         </a>
 
-        <a href="../modules/product_list.php" style="text-decoration: none; color: inherit;">
-            <div class="stat-card hover:bg-gray-50 transition-all">
-                <div class="stat-icon icon-green">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <a href="../modules/product_list.php" class="group block">
+            <div class="stat-card p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm group-hover:shadow-2xl group-hover:shadow-green-100 group-hover:-translate-y-2 transition-all duration-300 flex items-center gap-6">
+                <div class="stat-icon w-14 h-14 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center transition-transform group-hover:scale-110">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                     </svg>
                 </div>
                 <div>
-                    <p class="stat-label">Total Products</p>
-                    <h2 class="stat-value"><?= $productsCount ?></h2>
+                    <p class="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Total Products</p>
+                    <h2 class="text-3xl font-black text-gray-900 tracking-tighter"><?= $productsCount ?></h2>
                 </div>
             </div>
         </a>
 
-        <a href="../modules/order_list.php" style="text-decoration: none; color: inherit;">
-            <div class="stat-card hover:bg-gray-50 transition-all">
-                <div class="stat-icon" style="background: #f3e8ff; color: #7c3aed;">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <a href="../modules/order_list.php" class="group block">
+            <div class="stat-card p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm group-hover:shadow-2xl group-hover:shadow-purple-100 group-hover:-translate-y-2 transition-all duration-300 flex items-center gap-6">
+                <div class="stat-icon w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center transition-transform group-hover:scale-110">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
                 </div>
                 <div>
-                    <p class="stat-label">Total Orders</p>
-                    <h2 class="stat-value"><?= $ordersCount ?></h2>
+                    <p class="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Total Orders</p>
+                    <h2 class="text-3xl font-black text-gray-900 tracking-tighter"><?= $ordersCount ?></h2>
                 </div>
             </div>
         </a>
-
-        <div class="time-card">
-            <p class="stat-label">Current Year</p>
-            <h2 class="stat-value text-gray-400"><?= $currentYear ?></h2>
-        </div>
     </div>
 
-    <div class="charts-grid">
-        <div class="chart-container">
-            <div class="chart-header">
-                <h3 class="chart-title">Monthly Product Growth</h3>
-                <span class="badge-blue">Trend Analysis</span>
+    <div class="charts-grid mb-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="chart-container bg-white p-8 border border-gray-100 rounded-[2.5rem]">
+            <div class="chart-header flex justify-between items-center mb-6">
+                <h3 class="text-xs font-black text-gray-900 uppercase tracking-widest">Monthly Growth</h3>
+                <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-black uppercase">Analysis</span>
             </div>
-            <div class="canvas-wrapper">
+            <div class="h-64">
                 <canvas id="productsChart"></canvas>
             </div>
         </div>
 
-        <div class="chart-container">
-            <div class="chart-header">
-                <h3 class="chart-title">Inventory by Supplier</h3>
-                <span class="badge-purple">Stock Distribution</span>
+        <div class="chart-container bg-white p-8 border border-gray-100 rounded-[2.5rem]">
+            <div class="chart-header flex justify-between items-center mb-6">
+                <h3 class="text-xs font-black text-gray-900 uppercase tracking-widest">Supplier Stock</h3>
+                <span class="px-3 py-1 bg-purple-50 text-purple-600 rounded-lg text-[10px] font-black uppercase">Distribution</span>
             </div>
-            <div class="canvas-wrapper">
+            <div class="h-64">
                 <canvas id="supplierChart"></canvas>
             </div>
         </div>
     </div>
 
-    <div class="content-bottom-grid">
-        <div class="table-card">
-            <div class="table-header">
-                <h3 class="table-title">Recently Added Items</h3>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-10">
+        <div class="lg:col-span-2 bg-white border border-gray-100 rounded-[2.5rem] overflow-hidden">
+            <div class="p-8 border-b border-gray-50 flex justify-between items-center">
+                <h3 class="text-xs font-black text-gray-900 uppercase tracking-widest">Recent Activity</h3>
             </div>
-            <div class="table-responsive">
-                <table class="modern-table">
-                    <thead>
-                        <tr>
-                            <th>Product Detail</th>
-                            <th class="text-right" style="text-align: right; padding-right: 2rem;">Status</th>
+            <table class="w-full text-left">
+                <tbody class="text-sm">
+                    <?php foreach ($recentProducts as $item): ?>
+                        <tr class="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
+                            <td class="px-8 py-5">
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-gray-800 tracking-tight"><?= htmlspecialchars($item['product_name']) ?></span>
+                                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider"><?= htmlspecialchars($item['supplier_name'] ?? 'General') ?></span>
+                                </div>
+                            </td>
+                            <td class="px-8 py-5 text-right">
+                                <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-black uppercase">New Entry</span>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($recentProducts as $item): ?>
-                            <tr>
-                                <td>
-                                    <div class="product-info">
-                                        <span class="name"><?= htmlspecialchars($item['product_name']) ?></span>
-                                        <span class="vendor"><?= htmlspecialchars($item['supplier_name'] ?? 'General') ?></span>
-                                    </div>
-                                </td>
-                                <td class="text-right">
-                                    <span class="status-pill">New Entry</span>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
 
-        <div class="info-sidebar">
-            <div class="secure-badge">
-                <div class="badge-icon">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="lg:col-span-1">
+            <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-10 rounded-[2.5rem] shadow-2xl text-center flex flex-col items-center justify-center">
+                <div class="w-20 h-20 bg-white/10 text-white rounded-[2rem] flex items-center justify-center mb-8 backdrop-blur-md border border-white/10">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
                 </div>
-                <h4>Manager Access</h4>
-                <p>Advanced inventory permissions are active for your account.</p>
-                <a href="../modules/product_list.php" class="btn-outline">Full Inventory View</a>
+                <h4 class="text-2xl font-black text-white mb-3 tracking-tight">Manager Access</h4>
+                <p class="text-slate-400 text-sm font-medium leading-relaxed mb-10 px-4">Advanced inventory permissions and data export tools are active.</p>
+                <a href="../modules/product_list.php" class="w-full py-5 bg-white text-slate-900 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all hover:bg-slate-100 hover:scale-[1.02]">
+                    Full Inventory View
+                </a>
             </div>
         </div>
     </div>
@@ -180,6 +167,7 @@ $monthTotalsJSON = json_encode(array_column($monthlyData, 'total'));
     Chart.defaults.font.family = "'Inter', sans-serif";
     Chart.defaults.color = '#94a3b8';
 
+    // --- MONTHLY GROWTH CHART ---
     const ctx1 = document.getElementById('productsChart').getContext('2d');
     const gradient = ctx1.createLinearGradient(0, 0, 0, 300);
     gradient.addColorStop(0, 'rgba(59, 130, 246, 0.2)');
@@ -198,7 +186,6 @@ $monthTotalsJSON = json_encode(array_column($monthlyData, 'total'));
                 pointBorderColor: '#3b82f6',
                 pointBorderWidth: 2,
                 pointRadius: 4,
-                pointHoverRadius: 6,
                 tension: 0.4,
                 fill: true
             }]
@@ -206,35 +193,15 @@ $monthTotalsJSON = json_encode(array_column($monthlyData, 'total'));
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
+            plugins: { legend: { display: false } },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    min: 0,
-                    max: 100,
-                    grid: {
-                        color: '#f1f5f9'
-                    },
-                    ticks: {
-                        padding: 10
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        padding: 10
-                    }
-                }
+                y: { beginAtZero: true, min: 0, max: 50, grid: { color: '#f8fafc' }, ticks: { stepSize: 10 } },
+                x: { grid: { display: false } }
             }
         }
     });
 
+    // --- SUPPLIER STOCK CHART ---
     new Chart(document.getElementById('supplierChart'), {
         type: 'bar',
         data: {
@@ -243,36 +210,20 @@ $monthTotalsJSON = json_encode(array_column($monthlyData, 'total'));
                 data: <?= $supplierTotalsJSON ?>,
                 backgroundColor: '#818cf8',
                 hoverBackgroundColor: '#6366f1',
-                borderRadius: 6,
-                barThickness: 15
+                borderRadius: 10,
+                barThickness: 16
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
+            plugins: { legend: { display: false } },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    min: 0,
-                    max: 50,
-                    grid: {
-                        color: '#f1f5f9'
-                    },
-                    ticks: {
-                        padding: 10
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    }
-                }
+                y: { beginAtZero: true, min: 0, max: 50, grid: { color: '#f8fafc' }, ticks: { stepSize: 10 } },
+                x: { grid: { display: false } }
             }
         }
     });
 </script>
+
+<?php include '../includes/footer.php'; ?>
