@@ -22,7 +22,8 @@ if (!empty($supplier_id)) { $query .= " AND p.supplier_id = :supplier_id"; }
 if (!empty($min_price))    { $query .= " AND p.unit_price >= :min_price"; }
 if (!empty($max_price))    { $query .= " AND p.unit_price <= :max_price"; }
 
-$query .= " ORDER BY p.product_name ASC";
+// INTEGRATION: Change Order to product_id DESC to show recently added first
+$query .= " ORDER BY p.product_id DESC";
 
 $stmt = $pdo->prepare($query);
 

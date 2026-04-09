@@ -33,8 +33,6 @@ Implement the Dashboard using the CTE/Subqueries. Add CSS/Tailwind for a profess
 - error in edit order
 
 **PRODUCT MODULE**
-- error in edit product
-- fix edit layout
 
 **SUPPLIERS MODULE**
 
