@@ -1,0 +1,305 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
+:root {
+    --bg-main: #f8fafc;
+    --card-bg: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --blue-primary: #3b82f6;
+    --border-color: #e2e8f0;
+}
+
+body {
+    background-color: var(--bg-main);
+    font-family: 'Inter', sans-serif;
+    color: var(--text-main);
+}
+
+.dashboard-container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Header Section */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+}
+
+.page-title {
+    font-size: 1.875rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    margin: 0;
+}
+
+.page-subtitle {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin: 0.25rem 0 0 0;
+}
+
+.btn-primary {
+    background: var(--blue-primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
+    text-decoration: none;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+}
+
+/* Top Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-blue { background: #eff6ff; color: #3b82f6; }
+.icon-green { background: #f0fdf4; color: #22c55e; }
+
+.stat-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    margin: 0;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0;
+}
+
+/* Shortcut & Decorative Cards */
+.shortcut-card {
+    background: #1e293b;
+    color: white;
+    padding: 1.5rem;
+    border-radius: 20px;
+    transition: transform 0.2s;
+    text-decoration: none;
+}
+
+.shortcut-card:hover { transform: scale(1.02); }
+
+.shortcut-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+}
+
+.shortcut-title { font-weight: 700; font-size: 1.1rem; }
+.shortcut-arrow { font-size: 1.2rem; }
+
+.time-card {
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+}
+
+/* Middle Charts Grid */
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.chart-container {
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 24px;
+    border: 1px solid var(--border-color);
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.chart-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.canvas-wrapper {
+    height: 250px;
+    position: relative;
+}
+
+/* Bottom Content Layout */
+.content-bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .content-bottom-grid {
+        grid-template-columns: 2fr 1fr;
+    }
+}
+
+/* Recent Items Table Card */
+.table-card {
+    background: var(--card-bg);
+    border-radius: 24px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.table-header { 
+    padding: 1.5rem; 
+    border-bottom: 1px solid var(--border-color); 
+}
+
+.table-title { 
+    font-size: 0.75rem; 
+    font-weight: 700; 
+    text-transform: uppercase; 
+    color: var(--text-muted); 
+    margin: 0; 
+}
+
+.modern-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modern-table th {
+    padding: 1rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: #fafafa;
+    text-align: left;
+}
+
+.modern-table td {
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.product-info .name {
+    display: block;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-main);
+}
+
+.product-info .vendor {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+/* Info/Manager Sidebar */
+.info-sidebar {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 24px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.badge-icon {
+    width: 64px;
+    height: 64px;
+    background: #eff6ff;
+    color: #3b82f6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.btn-outline {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid #dbeafe;
+    background: #f8fafc;
+    color: #2563eb;
+    border-radius: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.btn-outline:hover { background: #eff6ff; }
+
+/* Status Pills & Badges */
+.status-pill {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.badge-blue { 
+    background: #dbeafe; 
+    color: #1e40af; 
+    font-size: 0.7rem; 
+    padding: 0.25rem 0.6rem; 
+    border-radius: 6px; 
+    font-weight: 700; 
+}
+
+.badge-purple { 
+    background: #f3e8ff; 
+    color: #6b21a8; 
+    font-size: 0.7rem; 
+    padding: 0.25rem 0.6rem; 
+    border-radius: 6px; 
+    font-weight: 700; 
+}
