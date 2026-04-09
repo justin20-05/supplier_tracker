@@ -23,5 +23,17 @@ Implement the Dashboard using the CTE/Subqueries. Add CSS/Tailwind for a profess
 
 - fix the login for the staffs
 - add toast message for each action
-- add filter for products, filter by supplier
-- add filter for orders, filter by supplier and status
+- make filter layout consistent (suppliers)
+
+**ORDER MODULE**
+- error in Add New Order
+- error in edit order
+
+**PRODUCT MODULE**
+- error in edit product
+- fix edit layout
+
+**SUPPLIERS MODULE**
+- fix edit layout
+- after save update edit supplier should redirect to Supplier Module again
+- error add new supplier 
