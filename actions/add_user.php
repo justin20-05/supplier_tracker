@@ -8,7 +8,7 @@ if ($_SESSION['role'] !== 'Admin') {
     exit(); 
 }
 
-$message = "";
+$error_toast = false;
 
 // 2. Handle Form Submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -21,15 +21,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $pdo->prepare("INSERT INTO users (username, password, full_name, role) VALUES (?, ?, ?, ?)");
         $stmt->execute([$username, $password, $full_name, $role]);
         
-        // Success redirect
-        header("Location: ../modules/user_management.php?msg=user_added");
+        header("Location: ../modules/user_management.php?msg=added");
         exit();
     } catch (PDOException $e) {
-        $message = "<div class='bg-red-100 text-red-700 p-4 rounded-2xl mb-6 font-bold'>Username already exists.</div>";
+        $error_toast = "Username already exists.";
     }
 }
 
-// 3. Now safe to include HTML
 include '../includes/header.php';
 ?>
 
@@ -45,7 +43,7 @@ include '../includes/header.php';
 
     <div class="bg-white p-10 rounded-3xl shadow-sm border border-gray-100">
         <h2 class="text-3xl font-black text-gray-900 mb-6 tracking-tight">New User Account</h2>
-        <?= $message ?>
+        
         <form method="POST" class="space-y-6">
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Full Name</label>
@@ -75,5 +73,13 @@ include '../includes/header.php';
         </form>
     </div>
 </div>
+
+<?php if ($error_toast): ?>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        showToast("<?= $error_toast ?>", "error");
+    });
+</script>
+<?php endif; ?>
 
 <?php include '../includes/footer.php'; ?>

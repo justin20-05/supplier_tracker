@@ -25,7 +25,6 @@ Implement the Dashboard using the CTE/Subqueries. Add CSS/Tailwind for a profess
 
 
 - fix the login for the staffs
-- add toast for create account
 
 **ORDER MODULE**
 
