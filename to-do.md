@@ -23,8 +23,7 @@ Build the Order Entry and Tracking modules.
 - Reporting & UI
 Implement the Dashboard using the CTE/Subqueries. Add CSS/Tailwind for a professional look.
 
-
-- fix the login for the staffs
+- make other modules not  visible to specific users
 
 **ORDER MODULE**
 
