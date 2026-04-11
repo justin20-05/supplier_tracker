@@ -2,8 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 if (!isset($_SESSION['user_id'])) {
-
-    header("Location: ../index.php"); 
+    header("Location: ../index.php");
     exit();
 }
 
@@ -11,7 +10,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
 $user_role = $_SESSION['role'] ?? 'Staff';
 
 if ($current_page === 'dashboard.php' && $user_role !== 'Admin') {
-
     if ($user_role === 'Supplier_Staff') {
         header("Location: supplier_list.php");
     } elseif ($user_role === 'Order_Staff') {
@@ -91,48 +89,47 @@ if ($current_page === 'dashboard.php' && $user_role !== 'Admin') {
             </div>
 
             <div class="flex items-center space-x-3">
-                <?php if ($_SESSION['role'] === 'Admin'): ?>
-                    <div class="relative group">
-                        <a href="../modules/user_management.php"
-                            class="flex items-center space-x-3 px-3 py-2 rounded-2xl hover:bg-gray-50 transition-all border <?= ($current_page == 'user_management.php') ? 'border-blue-100 bg-blue-50/50' : 'border-transparent' ?>">
-                            <div class="text-right hidden sm:block">
-                                <p class="text-[10px] font-black text-gray-900 leading-none uppercase tracking-tighter">
-                                    <?= htmlspecialchars($_SESSION['username'] ?? 'Admin') ?>
-                                </p>
-                                <p class="text-[9px] font-bold text-blue-500 uppercase tracking-widest">System Admin</p>
-                            </div>
-                            <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-200 group-hover:scale-105 transition-transform">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                            </div>
-                        </a>
-                        <span class="tooltip shadow-xl">Manage Accounts</span>
-                    </div>
-                <?php else: ?>
-                    <div class="relative group">
-                        <div class="flex items-center space-x-3 px-3 py-2">
-                            <div class="text-right hidden sm:block">
-                                <p class="text-[10px] font-black text-gray-900 leading-none uppercase tracking-tighter">
-                                    <?= htmlspecialchars($_SESSION['username']) ?>
-                                </p>
-                                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Staff Account</p>
-                            </div>
-                            <div class="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 border border-gray-100">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="relative" id="settingsDropdown">
+                    <button onclick="toggleDropdown()"
+                        class="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all shadow-sm active:scale-95 group">
+                        <svg class="w-6 h-6 transition-transform duration-500 ease-in-out" id="gearIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </button>
+
+                    <div id="dropdownMenu" class="hidden absolute right-0 mt-3 w-60 bg-white rounded-3xl shadow-2xl border border-gray-100 py-3 z-50 transform origin-top-right transition-all animate-in fade-in zoom-in duration-200">
+                        <div class="px-6 py-3 mb-2">
+                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">Settings</p>
+                        </div>
+
+                        <a href="../modules/profile.php" class="flex items-center space-x-3 px-6 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors group/item">
+                            <div class="p-2 rounded-lg bg-gray-50 group-hover/item:bg-blue-100 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
                             </div>
-                        </div>
-                        <span class="tooltip shadow-xl">Profile Info</span>
+                            <span class="text-sm font-bold">My Profile</span>
+                        </a>
+
+                        <?php if ($user_role === 'Admin'): ?>
+                            <a href="../modules/user_management.php" class="flex items-center space-x-3 px-6 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors group/item">
+                                <div class="p-2 rounded-lg bg-gray-50 group-hover/item:bg-blue-100 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                    </svg>
+                                </div>
+                                <span class="text-sm font-bold">User Management</span>
+                            </a>
+                        <?php endif; ?>
                     </div>
-                <?php endif; ?>
+                </div>
 
                 <div class="h-8 w-[1px] bg-gray-100 hidden sm:block mx-1"></div>
 
                 <button type="button" onclick="toggleLogoutModal()"
-                    class="bg-red-50 hover:bg-red-100 text-red-600 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-red-100 flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="bg-red-50 hover:bg-red-100 text-red-600 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-red-100 flex items-center gap-2 group">
+                    <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
                     Logout
@@ -142,9 +139,48 @@ if ($current_page === 'dashboard.php' && $user_role !== 'Admin') {
     </nav>
 
     <script>
+        // Settings Dropdown Logic
+        function toggleDropdown() {
+            const menu = document.getElementById('dropdownMenu');
+            const gear = document.getElementById('gearIcon');
+
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                gear.classList.add('rotate-180');
+
+                setTimeout(() => {
+                    window.addEventListener('click', closeMenuOnOutsideClick);
+                }, 10);
+            } else {
+                closeDropdown();
+            }
+        }
+
+        function closeDropdown() {
+            const menu = document.getElementById('dropdownMenu');
+            const gear = document.getElementById('gearIcon');
+            if (menu) menu.classList.add('hidden');
+            if (gear) gear.classList.remove('rotate-180');
+            window.removeEventListener('click', closeMenuOnOutsideClick);
+        }
+
+        function closeMenuOnOutsideClick(e) {
+            const container = document.getElementById('settingsDropdown');
+            if (container && !container.contains(e.target)) {
+                closeDropdown();
+            }
+        }
+
+        // Logout Modal Logic
         function toggleLogoutModal() {
             const modal = document.getElementById('logoutModal');
-            modal.classList.toggle('hidden');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            } else {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
         }
     </script>
 
