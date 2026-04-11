@@ -1,10 +1,28 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
+
 if (!isset($_SESSION['user_id'])) {
-    header("Location: index.php");
+
+    header("Location: ../index.php"); 
     exit();
 }
+
 $current_page = basename($_SERVER['PHP_SELF']);
+$user_role = $_SESSION['role'] ?? 'Staff';
+
+if ($current_page === 'dashboard.php' && $user_role !== 'Admin') {
+
+    if ($user_role === 'Supplier_Staff') {
+        header("Location: supplier_list.php");
+    } elseif ($user_role === 'Order_Staff') {
+        header("Location: order_list.php");
+    } elseif ($user_role === 'Product_Staff') {
+        header("Location: product_list.php");
+    } else {
+        header("Location: ../index.php");
+    }
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -2,7 +2,7 @@
 require '../config/db.php';
 if (session_status() === PHP_SESSION_NONE) session_start();
 
-// 1. Access Control: Redirect before ANY HTML is sent
+// 1. Access Control
 if ($_SESSION['role'] !== 'Admin') { 
     header("Location: ../modules/dashboard.php"); 
     exit(); 
@@ -10,10 +10,11 @@ if ($_SESSION['role'] !== 'Admin') {
 
 $error_toast = false;
 
-// 2. Handle Form Submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = trim($_POST['username']);
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    
+    $password = md5($_POST['password']); 
+    
     $full_name = trim($_POST['full_name']);
     $role = $_POST['role'];
 
@@ -61,8 +62,10 @@ include '../includes/header.php';
                 <div>
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Role</label>
                     <select name="role" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="Staff">Staff Member</option>
                         <option value="Admin">System Admin</option>
+                        <option value="Supplier_Staff">Supplier Staff</option>
+                        <option value="Order_Staff">Order Staff</option>
+                        <option value="Product_Staff">Product Staff</option>
                     </select>
                 </div>
             </div>
