@@ -69,22 +69,34 @@ if ($current_page === 'dashboard.php' && $user_role !== 'Admin') {
                 <h1 class="font-black text-xl text-blue-600 tracking-tighter uppercase">Tracker Pro</h1>
 
                 <div class="hidden md:flex items-center space-x-8 text-[13px] font-bold uppercase tracking-wider">
+                    
+                    <?php if ($user_role === 'Admin'): ?>
                     <a href="../modules/dashboard.php"
                         class="nav-link <?= ($current_page == 'dashboard.php') ? 'text-blue-600 nav-link-active' : 'text-gray-400 hover:text-gray-600' ?>">
                         Dashboard
                     </a>
+                    <?php endif; ?>
+
+                    <?php if ($user_role === 'Admin' || $user_role === 'Supplier_Staff'): ?>
                     <a href="../modules/supplier_list.php"
                         class="nav-link <?= ($current_page == 'supplier_list.php' || $current_page == 'add_supplier.php') ? 'text-blue-600 nav-link-active' : 'text-gray-400 hover:text-gray-600' ?>">
                         Suppliers
                     </a>
+                    <?php endif; ?>
+
+                    <?php if ($user_role === 'Admin' || $user_role === 'Product_Staff'): ?>
                     <a href="../modules/product_list.php"
                         class="nav-link <?= ($current_page == 'product_list.php' || $current_page == 'add_product.php') ? 'text-blue-600 nav-link-active' : 'text-gray-400 hover:text-gray-600' ?>">
                         Products
                     </a>
+                    <?php endif; ?>
+
+                    <?php if ($user_role === 'Admin' || $user_role === 'Order_Staff'): ?>
                     <a href="../modules/order_list.php"
                         class="nav-link <?= ($current_page == 'order_list.php' || $current_page == 'add_order.php') ? 'text-blue-600 nav-link-active' : 'text-gray-400 hover:text-gray-600' ?>">
                         Orders
                     </a>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -139,15 +151,12 @@ if ($current_page === 'dashboard.php' && $user_role !== 'Admin') {
     </nav>
 
     <script>
-        // Settings Dropdown Logic
         function toggleDropdown() {
             const menu = document.getElementById('dropdownMenu');
             const gear = document.getElementById('gearIcon');
-
             if (menu.classList.contains('hidden')) {
                 menu.classList.remove('hidden');
                 gear.classList.add('rotate-180');
-
                 setTimeout(() => {
                     window.addEventListener('click', closeMenuOnOutsideClick);
                 }, 10);
@@ -171,7 +180,6 @@ if ($current_page === 'dashboard.php' && $user_role !== 'Admin') {
             }
         }
 
-        // Logout Modal Logic
         function toggleLogoutModal() {
             const modal = document.getElementById('logoutModal');
             if (modal.classList.contains('hidden')) {

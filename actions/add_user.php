@@ -2,7 +2,6 @@
 require '../config/db.php';
 if (session_status() === PHP_SESSION_NONE) session_start();
 
-// 1. Access Control
 if ($_SESSION['role'] !== 'Admin') { 
     header("Location: ../modules/dashboard.php"); 
     exit(); 
@@ -12,15 +11,15 @@ $error_toast = false;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = trim($_POST['username']);
-    
     $password = md5($_POST['password']); 
-    
-    $full_name = trim($_POST['full_name']);
+    $first_name = trim($_POST['first_name']);
+    $middle_initial = strtoupper(trim($_POST['middle_initial']));
+    $last_name = trim($_POST['last_name']);
     $role = $_POST['role'];
 
     try {
-        $stmt = $pdo->prepare("INSERT INTO users (username, password, full_name, role) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$username, $password, $full_name, $role]);
+        $stmt = $pdo->prepare("INSERT INTO users (username, password, first_name, middle_initial, last_name, role) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$username, $password, $first_name, $middle_initial, $last_name, $role]);
         
         header("Location: ../modules/user_management.php?msg=added");
         exit();
@@ -45,19 +44,39 @@ include '../includes/header.php';
     <div class="bg-white p-10 rounded-3xl shadow-sm border border-gray-100">
         <h2 class="text-3xl font-black text-gray-900 mb-6 tracking-tight">New User Account</h2>
         
-        <form method="POST" class="space-y-6">
-            <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Full Name</label>
-                <input type="text" name="full_name" required placeholder="John Doe" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+        <form method="POST" class="space-y-4">
+            <div class="grid grid-cols-5 gap-4">
+                <div class="col-span-2">
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">First Name</label>
+                    <input type="text" name="first_name" required placeholder="John" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                </div>
+                <div class="col-span-1">
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">M.I.</label>
+                    <input type="text" name="middle_initial" maxlength="1" placeholder="D" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all text-center">
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Last Name</label>
+                    <input type="text" name="last_name" required placeholder="Doe" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                </div>
             </div>
+            
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Username</label>
                 <input type="text" name="username" required placeholder="johndoe123" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
             </div>
+            
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Password</label>
-                    <input type="password" name="password" required placeholder="••••••••" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                    <div class="relative group">
+                        <input type="password" id="passwordInput" name="password" required placeholder="••••••••" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                        <button type="button" onclick="toggleVisibility()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-blue-600 transition-colors">
+                            <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Role</label>
@@ -77,12 +96,18 @@ include '../includes/header.php';
     </div>
 </div>
 
-<?php if ($error_toast): ?>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        showToast("<?= $error_toast ?>", "error");
-    });
+    function toggleVisibility() {
+        const input = document.getElementById('passwordInput');
+        const icon = document.getElementById('eyeIcon');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />`;
+        } else {
+            input.type = 'password';
+            icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`;
+        }
+    }
 </script>
-<?php endif; ?>
 
 <?php include '../includes/footer.php'; ?>

@@ -8,7 +8,8 @@ if ($_SESSION['role'] !== 'Admin') {
     exit();
 }
 
-$query = "SELECT user_id, username, full_name, role, created_at FROM users ORDER BY role ASC, full_name ASC";
+// UPDATED QUERY to fetch new columns
+$query = "SELECT user_id, username, first_name, middle_initial, last_name, role, created_at FROM users ORDER BY role ASC, first_name ASC";
 $users = $pdo->query($query)->fetchAll();
 
 $msg = $_GET['msg'] ?? '';
@@ -39,20 +40,23 @@ $err = $_GET['err'] ?? '';
             </tr>
         </thead>
         <tbody class="text-sm">
-            <?php foreach ($users as $u): ?>
+            <?php foreach ($users as $u): 
+                // Format the name display
+                $fullName = $u['first_name'] . ' ' . ($u['middle_initial'] ? $u['middle_initial'] . '. ' : '') . $u['last_name'];
+            ?>
                 <tr class="hover:bg-blue-50/20 transition border-b border-gray-50 last:border-0">
                     <td class="p-5">
                         <div class="flex items-center gap-3">
                             <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 text-blue-600 flex items-center justify-center font-black text-xs">
-                                <?= strtoupper(substr($u['full_name'], 0, 1)) ?>
+                                <?= strtoupper(substr($u['first_name'], 0, 1)) ?>
                             </div>
-                            <span class="font-bold text-gray-800 tracking-tight"><?= htmlspecialchars($u['full_name']) ?></span>
+                            <span class="font-bold text-gray-800 tracking-tight"><?= htmlspecialchars($fullName) ?></span>
                         </div>
                     </td>
                     <td class="p-5 text-gray-700 font-bold">@<?= htmlspecialchars($u['username']) ?></td>
                     <td class="p-5">
                         <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider <?= $u['role'] === 'Admin' ? 'bg-purple-50 text-purple-600' : 'bg-blue-50 text-blue-600' ?>">
-                            <?= $u['role'] ?>
+                            <?= str_replace('_', ' ', $u['role']) ?>
                         </span>
                     </td>
                     <td class="p-5 text-gray-800 font-medium"><?= date('M d, Y', strtotime($u['created_at'])) ?></td>
@@ -67,7 +71,7 @@ $err = $_GET['err'] ?? '';
                             
                             <?php if ($u['user_id'] != $_SESSION['user_id']): ?>
                                 <button type="button" 
-                                    onclick="openDeleteModal(<?= $u['user_id'] ?>, '<?= htmlspecialchars($u['full_name']) ?>')"
+                                    onclick="openDeleteModal(<?= $u['user_id'] ?>, '<?= htmlspecialchars($fullName) ?>')"
                                     class="p-2 text-red-500 bg-red-50 rounded-lg hover:bg-red-600 hover:text-white transition-all shadow-sm" title="Remove User">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
