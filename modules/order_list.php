@@ -49,7 +49,9 @@ $hasFilters = $supplier_filter || $status_filter;
     </div>
     <a href="../actions/add_order.php"
         class="flex items-center justify-center px-5 py-3 bg-blue-600 text-white rounded-2xl font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-200">
-        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
         New Order
     </a>
 </div>
@@ -82,7 +84,7 @@ $hasFilters = $supplier_filter || $status_filter;
 
         <div class="flex items-end gap-2">
             <button type="submit" class="flex-1 bg-gray-800 text-white py-2 rounded hover:bg-gray-700 transition text-sm font-bold">Apply Filter</button>
-            <?php if($hasFilters): ?>
+            <?php if ($hasFilters): ?>
                 <a href="order_list.php" class="flex-1 bg-gray-100 text-gray-600 py-2 rounded hover:bg-gray-200 transition text-sm font-bold text-center border">Reset</a>
             <?php endif; ?>
         </div>
@@ -108,7 +110,7 @@ $hasFilters = $supplier_filter || $status_filter;
                     <td class="p-4 font-mono font-bold text-blue-600">#ORD-<?= $o['order_id'] ?></td>
                     <td class="p-4 font-semibold text-gray-800"><?= htmlspecialchars($o['supplier_name'] ?? 'N/A') ?></td>
                     <td class="p-4 text-gray-500"><?= date('M d, Y', strtotime($o['expected_date'])) ?></td>
-                    
+
                     <td class="p-4">
                         <div class="text-sm font-bold text-gray-900"><?= $o['total_quantity'] ?? 0 ?> units</div>
                         <button onclick="viewItems(<?= $o['order_id'] ?>)" class="text-[10px] text-blue-600 font-bold uppercase hover:underline">
@@ -122,15 +124,15 @@ $hasFilters = $supplier_filter || $status_filter;
 
                     <td class="p-4">
                         <?php
-                            $status = strtolower($o['status']); 
-                            $colorClasses = "bg-gray-100 text-gray-700"; 
-                            if ($status == 'pending') {
-                                $colorClasses = "bg-yellow-100 text-yellow-700";
-                            } elseif ($status == 'received') {
-                                $colorClasses = "bg-green-100 text-green-700";
-                            } elseif ($status == 'cancelled') {
-                                $colorClasses = "bg-red-100 text-red-700";
-                            }
+                        $status = strtolower($o['status']);
+                        $colorClasses = "bg-gray-100 text-gray-700";
+                        if ($status == 'pending') {
+                            $colorClasses = "bg-yellow-100 text-yellow-700";
+                        } elseif ($status == 'received') {
+                            $colorClasses = "bg-green-100 text-green-700";
+                        } elseif ($status == 'cancelled') {
+                            $colorClasses = "bg-red-100 text-red-700";
+                        }
                         ?>
                         <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase <?= $colorClasses ?>">
                             <?= htmlspecialchars($o['status']) ?>
@@ -138,16 +140,23 @@ $hasFilters = $supplier_filter || $status_filter;
                     </td>
                     <td class="p-4 text-center">
                         <div class="flex justify-center items-center gap-2">
+                            <button onclick="viewOrder(<?= htmlspecialchars(json_encode($o)) ?>)"
+                                class="p-2 text-green-500 bg-green-50 rounded-lg hover:bg-green-600 hover:text-white transition-all inline-block mr-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </button>
                             <a href="../actions/edit_order.php?id=<?= $o['order_id'] ?>"
                                 class="p-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-600 hover:text-white transition-all shadow-sm" title="Edit">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                 </svg>
                             </a>
                             <button onclick="openDeleteModal('../actions/delete_order.php?id=<?= $o['order_id'] ?>')"
                                 class="p-2 text-red-500 bg-red-50 rounded-lg hover:bg-red-600 hover:text-white transition-all shadow-sm" title="Delete">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
                             </button>
                         </div>
@@ -168,7 +177,9 @@ $hasFilters = $supplier_filter || $status_filter;
         <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
             <h3 class="text-xl font-black text-gray-900">Delivery Contents</h3>
             <button onclick="closeItemsModal()" class="text-gray-400 hover:text-gray-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
             </button>
         </div>
         <div id="modalBody" class="p-6 max-h-[400px] overflow-y-auto"></div>
@@ -187,6 +198,24 @@ $hasFilters = $supplier_filter || $status_filter;
         <div class="flex gap-3 mt-8">
             <button onclick="closeDeleteModal()" class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-2xl font-bold hover:bg-gray-200 transition">Cancel</button>
             <a id="confirmDeleteBtn" href="#" class="flex-1 px-4 py-3 bg-red-600 text-white text-center rounded-2xl font-bold hover:bg-red-700 transition">Delete</a>
+        </div>
+    </div>
+</div>
+
+<div id="viewModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all">
+        <div class="p-8">
+            <div class="flex justify-between items-start mb-6">
+                <h3 class="text-2xl font-black text-gray-900">Order Overview</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div id="modalContent" class="space-y-4">
+            </div>
+            <button onclick="closeModal()" class="w-full mt-8 py-4 bg-gray-100 text-gray-700 rounded-2xl font-bold hover:bg-gray-200 transition">Close Preview</button>
         </div>
     </div>
 </div>
@@ -222,14 +251,54 @@ $hasFilters = $supplier_filter || $status_filter;
         }
     }
 
-    function closeItemsModal() { document.getElementById('itemsModal').classList.add('hidden'); }
-    
+    function closeItemsModal() {
+        document.getElementById('itemsModal').classList.add('hidden');
+    }
+
     function openDeleteModal(url) {
         document.getElementById('confirmDeleteBtn').href = url;
         document.getElementById('deleteModal').classList.remove('hidden');
     }
-    
-    function closeDeleteModal() { document.getElementById('deleteModal').classList.add('hidden'); }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+    }
+
+    function viewOrder(data) {
+        const content = document.getElementById('modalContent');
+        content.innerHTML = `
+        <div class="grid grid-cols-2 gap-4 text-sm">
+            <div class="p-4 bg-blue-50 rounded-2xl">
+                <p class="text-[10px] font-bold text-blue-400 uppercase">Order ID</p>
+                <p class="font-mono font-bold text-blue-800 text-lg">#ORD-${data.order_id}</p>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-2xl">
+                <p class="text-[10px] font-bold text-gray-400 uppercase">Status</p>
+                <p class="font-bold text-gray-800 uppercase">${data.status}</p>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-2xl col-span-2">
+                <p class="text-[10px] font-bold text-gray-400 uppercase">Supplier</p>
+                <p class="font-bold text-gray-800">${data.supplier_name || 'N/A'}</p>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-2xl">
+                <p class="text-[10px] font-bold text-gray-400 uppercase">Total Items</p>
+                <p class="font-bold text-gray-800">${data.total_quantity || 0} units</p>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-2xl">
+                <p class="text-[10px] font-bold text-gray-400 uppercase">Order Value</p>
+                <p class="font-bold text-blue-600 text-lg">₱${parseFloat(data.total_order_value || 0).toLocaleString()}</p>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-2xl col-span-2">
+                <p class="text-[10px] font-bold text-gray-400 uppercase">Expected Delivery</p>
+                <p class="font-bold text-gray-800">${data.expected_date}</p>
+            </div>
+        </div>`;
+        document.getElementById('viewModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('viewModal').classList.add('hidden');
+    }
 </script>
 
 <?php include '../includes/footer.php'; ?>

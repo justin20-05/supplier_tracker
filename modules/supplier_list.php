@@ -133,6 +133,13 @@ $suppliers = $stmt->fetchAll();
                     </td>
                     <td class="p-4 text-center">
                         <div class="flex justify-center items-center gap-2">
+                            <button onclick="viewSupplier(<?= htmlspecialchars(json_encode($s)) ?>)"
+                                class="p-2 text-green-500 bg-green-50 rounded-lg hover:bg-green-600 hover:text-white transition-all inline-block mr-1" title="View Details">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </button>
                             <a href="../actions/edit_supplier.php?id=<?= $s['supplier_id'] ?>"
                                 class="p-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-600 hover:text-white transition-all shadow-sm" title="Edit">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -182,6 +189,41 @@ $suppliers = $stmt->fetchAll();
 
     function closeDeleteModal() {
         document.getElementById('deleteModal').classList.add('hidden');
+    }
+</script>
+
+<div id="viewModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all">
+        <div class="p-8">
+            <div class="flex justify-between items-start mb-6">
+                <h3 id="modalTitle" class="text-2xl font-black text-gray-900">Supplier Details</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg></button>
+            </div>
+            <div id="modalContent" class="space-y-4">
+            </div>
+            <button onclick="closeModal()" class="w-full mt-8 py-4 bg-gray-100 text-gray-700 rounded-2xl font-bold hover:bg-gray-200 transition">Close Preview</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function viewSupplier(data) {
+        const content = document.getElementById('modalContent');
+        content.innerHTML = `
+        <div class="grid grid-cols-2 gap-4 text-sm">
+            <div class="p-4 bg-gray-50 rounded-2xl"><p class="text-[10px] font-bold text-gray-400 uppercase">Supplier Name</p><p class="font-bold text-gray-800 text-lg">${data.name}</p></div>
+            <div class="p-4 bg-gray-50 rounded-2xl"><p class="text-[10px] font-bold text-gray-400 uppercase">Category</p><p class="font-bold text-gray-800">${data.category}</p></div>
+            <div class="p-4 bg-gray-50 rounded-2xl col-span-2"><p class="text-[10px] font-bold text-gray-400 uppercase">Contact Person</p><p class="font-bold text-gray-800">${data.contact_person}</p></div>
+            <div class="p-4 bg-gray-50 rounded-2xl"><p class="text-[10px] font-bold text-gray-400 uppercase">Email</p><p class="font-bold text-gray-800">${data.email}</p></div>
+            <div class="p-4 bg-gray-50 rounded-2xl"><p class="text-[10px] font-bold text-gray-400 uppercase">Phone</p><p class="font-bold text-gray-800">${data.phone}</p></div>
+        </div>`;
+        document.getElementById('viewModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('viewModal').classList.add('hidden');
     }
 </script>
 
