@@ -124,7 +124,7 @@ $monthTotalsJSON = json_encode(array_column($monthlyData, 'total'));
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-10">
         <div class="lg:col-span-2 bg-white border border-gray-100 rounded-[2.5rem] overflow-hidden">
             <div class="p-8 border-b border-gray-50 flex justify-between items-center">
-                <h3 class="text-xs font-black text-gray-900 uppercase tracking-widest">Recent Activity</h3>
+                <h3 class="text-xs font-black text-gray-900 uppercase tracking-widest">Recent Added Data</h3>
             </div>
             <table class="w-full text-left">
                 <tbody class="text-sm">
@@ -164,6 +164,7 @@ $monthTotalsJSON = json_encode(array_column($monthlyData, 'total'));
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    if (window.Chart) {
     Chart.defaults.font.family = "'Inter', sans-serif";
     Chart.defaults.color = '#94a3b8';
 
@@ -224,6 +225,9 @@ $monthTotalsJSON = json_encode(array_column($monthlyData, 'total'));
             }
         }
     });
+                    } else {
+                        console.error('Chart.js failed to load. Please check your internet connection or the CDN link.');
+                    }
 </script>
 
 <?php include '../includes/footer.php'; ?>

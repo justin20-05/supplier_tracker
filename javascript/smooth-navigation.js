@@ -30,40 +30,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     async function loadPage(url, pushState = true) {
-     
         updateActiveLink(url);
-
         mainContent.style.opacity = '0';
         mainContent.style.transform = 'translateY(10px)';
-        mainContent.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
 
         try {
             const response = await fetch(url);
             const text = await response.text();
-            
             const parser = new DOMParser();
             const doc = parser.parseFromString(text, 'text/html');
             const newElement = doc.getElementById('main-content');
 
             if (newElement) {
-
                 document.title = doc.title;
-
+                
                 mainContent.innerHTML = newElement.innerHTML;
 
-                if (pushState) {
-                    window.history.pushState({}, '', url);
-                }
+                const scripts = mainContent.querySelectorAll('script');
+                scripts.forEach(oldScript => {
+                    const newScript = document.createElement('script');
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+
+                if (pushState) window.history.pushState({}, '', url);
 
                 mainContent.style.opacity = '1';
                 mainContent.style.transform = 'translateY(0)';
             } else {
                 window.location.href = url;
             }
-
         } catch (error) {
             console.error('Smooth navigation failed:', error);
-            window.location.href = url; 
+            window.location.href = url;
         }
     }
 
