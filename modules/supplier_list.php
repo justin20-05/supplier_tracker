@@ -1,6 +1,11 @@
 <?php
 require '../config/db.php';
+require '../includes/pagination.php';
 include '../includes/header.php';
+
+$limit = 10;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
 
 $search   = $_GET['search'] ?? '';
 $cat_filter = $_GET['category'] ?? '';
@@ -8,35 +13,47 @@ $name_filter = $_GET['name'] ?? '';
 
 $hasFilters = $search || $cat_filter || $name_filter;
 
-// Fetch unique categories and names for the dropdown filters
+// Fetch dropdown data
 $categories = $pdo->query("SELECT category_name FROM categories ORDER BY category_name ASC")->fetchAll(PDO::FETCH_COLUMN);
 $names      = $pdo->query("SELECT DISTINCT name FROM suppliers ORDER BY name ASC")->fetchAll(PDO::FETCH_COLUMN);
 
-// Corrected Query: Uses alias 's', single ORDER BY, and sorts by newest first
+// Base query
 $query = "SELECT s.* FROM suppliers s WHERE 1=1";
+$countQuery = "SELECT COUNT(*) FROM suppliers s WHERE 1=1";
+
 $params = [];
 
+// Filters
 if ($search) {
     $query .= " AND (s.name LIKE ? OR s.category LIKE ?)";
+    $countQuery .= " AND (s.name LIKE ? OR s.category LIKE ?)";
     $params[] = "%$search%";
     $params[] = "%$search%";
 }
 
 if ($cat_filter) {
     $query .= " AND s.category = ?";
+    $countQuery .= " AND s.category = ?";
     $params[] = $cat_filter;
 }
 
 if ($name_filter) {
     $query .= " AND s.name = ?";
+    $countQuery .= " AND s.name = ?";
     $params[] = $name_filter;
 }
 
-$query .= " GROUP BY s.supplier_id ORDER BY s.supplier_id DESC";
+// ✅ COUNT QUERY
+$stmtCount = $pdo->prepare($countQuery);
+$stmtCount->execute($params);
+$totalRows = $stmtCount->fetchColumn();
+$totalPages = ceil($totalRows / $limit);
+
+$query .= " ORDER BY s.supplier_id DESC LIMIT $limit OFFSET $offset";
 
 $stmt = $pdo->prepare($query);
 $stmt->execute($params);
-$suppliers = $stmt->fetchAll();
+$suppliers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -163,7 +180,8 @@ $suppliers = $stmt->fetchAll();
             <?php endif; ?>
         </tbody>
     </table>
-</div>
+</div> <?php renderPagination($page, $totalPages, $totalRows, $limit); ?>
+
 
 <div id="deleteModal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center">

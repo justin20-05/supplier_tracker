@@ -1,43 +1,63 @@
 <?php
 require '../config/db.php';
+require '../includes/pagination.php';
 include '../includes/header.php';
+
+$limit = 10;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
 
 $supplier_filter = $_GET['supplier_id'] ?? '';
 $status_filter   = $_GET['status'] ?? '';
 
-// Fetch all suppliers for the dropdown
-$suppliers = $pdo->query("SELECT supplier_id, name FROM suppliers ORDER BY name ASC")->fetchAll();
+// Fetch dropdown data
+$suppliers = $pdo->query("SELECT supplier_id, name FROM suppliers ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
+$statuses  = $pdo->query("SELECT DISTINCT status FROM delivery_orders ORDER BY status ASC")->fetchAll(PDO::FETCH_COLUMN);
 
-// Fetch unique statuses for the dropdown
-$statuses = $pdo->query("SELECT DISTINCT status FROM delivery_orders ORDER BY status ASC")->fetchAll(PDO::FETCH_COLUMN);
-
-$query = "SELECT o.*, s.name as supplier_name, u.username as creator_name,
-          COUNT(oi.item_id) as unique_products,
-          SUM(oi.quantity) as total_quantity,
-          SUM(oi.quantity * oi.unit_price_at_order) as total_order_value
-          FROM delivery_orders o 
-          LEFT JOIN suppliers s ON o.supplier_id = s.supplier_id 
-          LEFT JOIN users u ON o.created_by = u.user_id
-          LEFT JOIN order_items oi ON o.order_id = oi.order_id
-          WHERE 1=1";
+// BASE QUERY
+$baseQuery = "FROM delivery_orders o 
+              LEFT JOIN suppliers s ON o.supplier_id = s.supplier_id 
+              LEFT JOIN users u ON o.created_by = u.user_id
+              LEFT JOIN order_items oi ON o.order_id = oi.order_id
+              WHERE 1=1";
 
 $params = [];
 
-if ($supplier_filter) {
-    $query .= " AND o.supplier_id = ?";
+// Filters
+if (!empty($supplier_filter)) {
+    $baseQuery .= " AND o.supplier_id = ?";
     $params[] = $supplier_filter;
 }
 
-if ($status_filter) {
-    $query .= " AND o.status = ?";
+if (!empty($status_filter)) {
+    $baseQuery .= " AND o.status = ?";
     $params[] = $status_filter;
 }
 
-$query .= " GROUP BY o.order_id ORDER BY o.order_id DESC";
+// COUNT QUERY 
+$countQuery = "SELECT COUNT(DISTINCT o.order_id) " . $baseQuery;
+
+$stmtCount = $pdo->prepare($countQuery);
+$stmtCount->execute($params);
+$totalRows = $stmtCount->fetchColumn();
+$totalPages = ceil($totalRows / $limit);
+
+// MAIN QUERY
+$query = "SELECT 
+            o.*, 
+            s.name as supplier_name, 
+            u.username as creator_name,
+            COUNT(oi.item_id) as unique_products,
+            COALESCE(SUM(oi.quantity), 0) as total_quantity,
+            COALESCE(SUM(oi.quantity * oi.unit_price_at_order), 0) as total_order_value
+          " . $baseQuery . "
+          GROUP BY o.order_id
+          ORDER BY o.order_id DESC
+          LIMIT $limit OFFSET $offset";
 
 $stmt = $pdo->prepare($query);
 $stmt->execute($params);
-$orders = $stmt->fetchAll();
+$orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $hasFilters = $supplier_filter || $status_filter;
 ?>
@@ -171,6 +191,7 @@ $hasFilters = $supplier_filter || $status_filter;
         </tbody>
     </table>
 </div>
+<?php renderPagination($page, $totalPages, $totalRows, $limit); ?>
 
 <div id="itemsModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden transition-all transform">

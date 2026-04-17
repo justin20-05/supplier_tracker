@@ -1,49 +1,70 @@
 <?php
 require '../config/db.php';
+require '../includes/pagination.php';
 include '../includes/header.php';
+
+$limit = 10;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
 
 $search = $_GET['search'] ?? '';
 $supplier_id = $_GET['supplier_id'] ?? '';
 $min_price = $_GET['min_price'] ?? '';
 $max_price = $_GET['max_price'] ?? '';
 
-// Fetch all suppliers for the dropdown
-$suppliers = $pdo->query("SELECT supplier_id, name FROM suppliers ORDER BY name ASC")->fetchAll();
+// Fetch suppliers dropdown
+$suppliers = $pdo->query("SELECT supplier_id, name FROM suppliers ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
 
-// Base query using product_code as per your database schema
+// Base queries
 $query = "SELECT p.*, s.name as supplier_name 
           FROM products p 
           LEFT JOIN suppliers s ON p.supplier_id = s.supplier_id 
-          WHERE (p.product_name LIKE :search1 OR p.product_code LIKE :search2)";
+          WHERE 1=1";
 
-// Dynamic filtering logic
+$countQuery = "SELECT COUNT(*) 
+               FROM products p 
+               LEFT JOIN suppliers s ON p.supplier_id = s.supplier_id 
+               WHERE 1=1";
+
+$params = [];
+
+//  filters 
+if (!empty($search)) {
+    $query .= " AND (p.product_name LIKE :search OR p.product_code LIKE :search)";
+    $countQuery .= " AND (p.product_name LIKE :search OR p.product_code LIKE :search)";
+    $params[':search'] = "%$search%";
+}
+
 if (!empty($supplier_id)) {
     $query .= " AND p.supplier_id = :supplier_id";
+    $countQuery .= " AND p.supplier_id = :supplier_id";
+    $params[':supplier_id'] = $supplier_id;
 }
+
 if (!empty($min_price)) {
     $query .= " AND p.unit_price >= :min_price";
+    $countQuery .= " AND p.unit_price >= :min_price";
+    $params[':min_price'] = $min_price;
 }
+
 if (!empty($max_price)) {
     $query .= " AND p.unit_price <= :max_price";
+    $countQuery .= " AND p.unit_price <= :max_price";
+    $params[':max_price'] = $max_price;
 }
 
-// Change Order to product_id DESC to show recently added first
-$query .= " ORDER BY p.product_id DESC";
+// Get total rows 
+$stmtCount = $pdo->prepare($countQuery);
+$stmtCount->execute($params);
+$totalRows = $stmtCount->fetchColumn();
+$totalPages = ceil($totalRows / $limit);
+
+// Final query 
+$query .= " ORDER BY p.product_id DESC LIMIT $limit OFFSET $offset";
 
 $stmt = $pdo->prepare($query);
-
-// Map unique placeholders
-$params = [
-    ':search1' => "%$search%",
-    ':search2' => "%$search%"
-];
-
-if (!empty($supplier_id)) $params[':supplier_id'] = $supplier_id;
-if (!empty($min_price))    $params[':min_price'] = $min_price;
-if (!empty($max_price))    $params[':max_price'] = $max_price;
-
 $stmt->execute($params);
-$products = $stmt->fetchAll();
+$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $hasFilters = $search || $supplier_id || $min_price || $max_price;
 ?>
@@ -160,6 +181,7 @@ $hasFilters = $search || $supplier_id || $min_price || $max_price;
         </tbody>
     </table>
 </div>
+<?php renderPagination($page, $totalPages, $totalRows, $limit); ?>
 
 <div id="deleteModal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center">
