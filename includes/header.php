@@ -32,6 +32,7 @@ if ($current_page === 'dashboard.php' && $user_role !== 'Admin') {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/header-style.css">
     <script src="../javascript/toast.js"></script>
+    <script src="../javascript/smooth-navigation.js"></script>
 </head>
 
 <body class="bg-gray-50">
@@ -192,4 +193,4 @@ if ($current_page === 'dashboard.php' && $user_role !== 'Admin') {
         }
     </script>
 
-    <main class="max-w-6xl mx-auto px-4">
+    <main id="main-content" class="max-w-6xl mx-auto px-4 pb-20 transition-all duration-300">

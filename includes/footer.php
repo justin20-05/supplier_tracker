@@ -1,6 +1,6 @@
-</main>
-    <footer class="mt-12 py-6 text-center text-gray-400 text-sm border-t border-gray-100">
-        &copy; <?= date('Y') ?> Supplier Delivery Tracker | Built with PHP & SQL
+</main> <footer class="text-center py-10 text-gray-400 text-xs font-bold uppercase tracking-widest">
+        &copy; <?php echo date('Y'); ?> Tracker Pro. All rights reserved.
     </footer>
+
 </body>
 </html>

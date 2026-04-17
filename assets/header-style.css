@@ -7,7 +7,7 @@ body {
 .nav-link {
     position: relative;
     padding: 0.5rem 0;
-    transition: all 0.3s ease;
+    transition: color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Active Page Blue Underline */
