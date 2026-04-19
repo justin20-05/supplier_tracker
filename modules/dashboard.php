@@ -6,6 +6,12 @@ include '../includes/header.php';
 $suppliersCount = $pdo->query("SELECT COUNT(*) FROM suppliers")->fetchColumn();
 $productsCount = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
 $ordersCount = $pdo->query("SELECT COUNT(*) FROM delivery_orders")->fetchColumn();
+$totalRevenue = $pdo->query("
+    SELECT SUM(oi.quantity * oi.unit_price_at_order) 
+    FROM order_items oi
+    JOIN delivery_orders o ON oi.order_id = o.order_id
+    WHERE LOWER(o.status) = 'received'
+")->fetchColumn() ?: 0;
 
 $recentProducts = $pdo->query("SELECT p.product_name, s.name as supplier_name 
                                FROM products p 
@@ -55,49 +61,65 @@ $monthTotalsJSON = json_encode(array_column($monthlyData, 'total'));
         </div>
     </header>
 
-    <div class="stats-grid mb-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <a href="../modules/supplier_list.php" class="group block">
-            <div class="stat-card p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm group-hover:shadow-2xl group-hover:shadow-blue-100 group-hover:-translate-y-2 transition-all duration-300 flex items-center gap-6">
-                <div class="stat-icon w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center transition-transform group-hover:scale-110">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-10V4a1 1 0 011-1h2a1 1 0 011 1v3M12 21v-3a1 1 0 011-1h2a1 1 0 011 1v3" />
-                    </svg>
-                </div>
-                <div>
-                    <p class="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Total Suppliers</p>
-                    <h2 class="text-3xl font-black text-gray-900 tracking-tighter"><?= $suppliersCount ?></h2>
-                </div>
+    <div class="stats-grid mb-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <a href="../modules/supplier_list.php" class="group block">
+        <div class="stat-card h-full p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm group-hover:shadow-2xl group-hover:shadow-blue-100 group-hover:-translate-y-2 transition-all duration-300 flex items-center gap-6">
+            <div class="stat-icon w-14 h-14 shrink-0 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center transition-transform group-hover:scale-110">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-10V4a1 1 0 011-1h2a1 1 0 011 1v3M12 21v-3a1 1 0 011-1h2a1 1 0 011 1v3" />
+                </svg>
             </div>
-        </a>
+            <div>
+                <p class="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Suppliers</p>
+                <h2 class="text-3xl font-black text-gray-900 tracking-tighter"><?= $suppliersCount ?></h2>
+            </div>
+        </div>
+    </a>
 
-        <a href="../modules/product_list.php" class="group block">
-            <div class="stat-card p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm group-hover:shadow-2xl group-hover:shadow-green-100 group-hover:-translate-y-2 transition-all duration-300 flex items-center gap-6">
-                <div class="stat-icon w-14 h-14 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center transition-transform group-hover:scale-110">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                    </svg>
-                </div>
-                <div>
-                    <p class="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Total Products</p>
-                    <h2 class="text-3xl font-black text-gray-900 tracking-tighter"><?= $productsCount ?></h2>
-                </div>
+    <a href="../modules/product_list.php" class="group block">
+        <div class="stat-card h-full p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm group-hover:shadow-2xl group-hover:shadow-green-100 group-hover:-translate-y-2 transition-all duration-300 flex items-center gap-6">
+            <div class="stat-icon w-14 h-14 shrink-0 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center transition-transform group-hover:scale-110">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
             </div>
-        </a>
+            <div>
+                <p class="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Products</p>
+                <h2 class="text-3xl font-black text-gray-900 tracking-tighter"><?= $productsCount ?></h2>
+            </div>
+        </div>
+    </a>
 
-        <a href="../modules/order_list.php" class="group block">
-            <div class="stat-card p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm group-hover:shadow-2xl group-hover:shadow-purple-100 group-hover:-translate-y-2 transition-all duration-300 flex items-center gap-6">
-                <div class="stat-icon w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center transition-transform group-hover:scale-110">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+    <a href="../modules/order_list.php" class="group block">
+        <div class="stat-card h-full p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm group-hover:shadow-2xl group-hover:shadow-purple-100 group-hover:-translate-y-2 transition-all duration-300 flex items-center gap-6">
+            <div class="stat-icon w-14 h-14 shrink-0 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center transition-transform group-hover:scale-110">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+            </div>
+            <div>
+                <p class="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Orders</p>
+                <h2 class="text-3xl font-black text-gray-900 tracking-tighter"><?= $ordersCount ?></h2>
+            </div>
+        </div>
+    </a>
+
+    <a href="../modules/order_list.php?status=Received" class="group block">
+        <div class="stat-card h-full p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm group-hover:shadow-2xl group-hover:shadow-emerald-100 group-hover:-translate-y-2 transition-all duration-300 flex flex-col justify-center">
+            <div class="flex items-center gap-6">
+                <div class="stat-icon w-14 h-14 shrink-0 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center transition-transform group-hover:scale-110">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
                 <div>
-                    <p class="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Total Orders</p>
-                    <h2 class="text-3xl font-black text-gray-900 tracking-tighter"><?= $ordersCount ?></h2>
+                    <p class="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Revenue</p>
+                    <h2 class="text-2xl font-black text-emerald-600 tracking-tighter">₱<?= number_format($totalRevenue, 2) ?></h2>
                 </div>
             </div>
-        </a>
-    </div>
+        </div>
+    </a>
+</div>
 
     <div class="charts-grid mb-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div class="chart-container bg-white p-8 border border-gray-100 rounded-[2.5rem]">
@@ -165,69 +187,105 @@ $monthTotalsJSON = json_encode(array_column($monthlyData, 'total'));
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     if (window.Chart) {
-    Chart.defaults.font.family = "'Inter', sans-serif";
-    Chart.defaults.color = '#94a3b8';
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#94a3b8';
 
-    // --- MONTHLY GROWTH CHART ---
-    const ctx1 = document.getElementById('productsChart').getContext('2d');
-    const gradient = ctx1.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.2)');
-    gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
+        // --- MONTHLY GROWTH CHART ---
+        const ctx1 = document.getElementById('productsChart').getContext('2d');
+        const gradient = ctx1.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, 'rgba(59, 130, 246, 0.2)');
+        gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
 
-    new Chart(ctx1, {
-        type: 'line',
-        data: {
-            labels: <?= $monthsJSON ?>,
-            datasets: [{
-                data: <?= $monthTotalsJSON ?>,
-                borderColor: '#3b82f6',
-                borderWidth: 3,
-                backgroundColor: gradient,
-                pointBackgroundColor: '#fff',
-                pointBorderColor: '#3b82f6',
-                pointBorderWidth: 2,
-                pointRadius: 4,
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { beginAtZero: true, min: 0, max: 50, grid: { color: '#f8fafc' }, ticks: { stepSize: 10 } },
-                x: { grid: { display: false } }
-            }
-        }
-    });
-
-    // --- SUPPLIER STOCK CHART ---
-    new Chart(document.getElementById('supplierChart'), {
-        type: 'bar',
-        data: {
-            labels: <?= $supplierNamesJSON ?>,
-            datasets: [{
-                data: <?= $supplierTotalsJSON ?>,
-                backgroundColor: '#818cf8',
-                hoverBackgroundColor: '#6366f1',
-                borderRadius: 10,
-                barThickness: 16
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { beginAtZero: true, min: 0, max: 50, grid: { color: '#f8fafc' }, ticks: { stepSize: 10 } },
-                x: { grid: { display: false } }
-            }
-        }
-    });
-                    } else {
-                        console.error('Chart.js failed to load. Please check your internet connection or the CDN link.');
+        new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: <?= $monthsJSON ?>,
+                datasets: [{
+                    data: <?= $monthTotalsJSON ?>,
+                    borderColor: '#3b82f6',
+                    borderWidth: 3,
+                    backgroundColor: gradient,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#3b82f6',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
                     }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        min: 0,
+                        max: 50,
+                        grid: {
+                            color: '#f8fafc'
+                        },
+                        ticks: {
+                            stepSize: 10
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // --- SUPPLIER STOCK CHART ---
+        new Chart(document.getElementById('supplierChart'), {
+            type: 'bar',
+            data: {
+                labels: <?= $supplierNamesJSON ?>,
+                datasets: [{
+                    data: <?= $supplierTotalsJSON ?>,
+                    backgroundColor: '#818cf8',
+                    hoverBackgroundColor: '#6366f1',
+                    borderRadius: 10,
+                    barThickness: 16
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        min: 0,
+                        max: 50,
+                        grid: {
+                            color: '#f8fafc'
+                        },
+                        ticks: {
+                            stepSize: 10
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    } else {
+        console.error('Chart.js failed to load. Please check your internet connection or the CDN link.');
+    }
 </script>
 
 <?php include '../includes/footer.php'; ?>
