@@ -87,8 +87,9 @@ if ($current_page === 'dashboard.php' && $user_role !== 'Admin') {
 
                     <?php if ($user_role === 'Admin' || $user_role === 'Product_Staff'): ?>
                         <a href="../modules/product_list.php"
-                            class="nav-link <?= ($current_page == 'product_list.php' || $current_page == 'add_product.php') ? 'text-blue-600 nav-link-active' : 'text-gray-400 hover:text-gray-600' ?>">
-                            Products
+                            class="nav-link flex items-center gap-1.5 <?= ($current_page == 'product_list.php' || $current_page == 'add_product.php') ? 'text-blue-600 nav-link-active' : 'text-gray-400 hover:text-gray-600' ?>">
+                            <span>Products</span>
+                            <span id="inventory-badge" class="hidden h-2 w-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)] animate-pulse"></span>
                         </a>
                     <?php endif; ?>
 
@@ -194,24 +195,37 @@ if ($current_page === 'dashboard.php' && $user_role !== 'Admin') {
     </script>
 
     <script>
-        async function checkInventoryAlerts() {
+        async function checkInventoryAlerts(showToasts = false) {
             try {
                 const response = await fetch('../actions/check_stock.php');
                 const lowStockItems = await response.json();
 
-                lowStockItems.forEach(item => {
-                    if (item.stock == 0) {
-                        showToast(`CRITICAL: ${item.product_name} is out of stock!`, 'error');
-                    } else {
-                        showToast(`${item.product_name} is low on stock (${item.stock} left)`, 'warning');
+                const navBadge = document.getElementById('inventory-badge');
+
+                if (lowStockItems.length > 0) {
+                    if (navBadge) navBadge.classList.remove('hidden');
+
+                    if (showToasts) {
+                        lowStockItems.forEach(item => {
+                            if (item.stock == 0) {
+                                showToast(`CRITICAL: ${item.product_name} is out of stock!`, 'error');
+                            } else {
+                                showToast(`${item.product_name} is low on stock (${item.stock} left)`, 'warning');
+                            }
+                        });
                     }
-                });
+                } else {
+                    if (navBadge) navBadge.classList.add('hidden');
+                }
             } catch (err) {
-                console.log('Stock check skip');
+                console.log('Stock check skipped');
             }
         }
 
-        document.addEventListener('DOMContentLoaded', checkInventoryAlerts);
+        document.addEventListener('DOMContentLoaded', () => {
+            const isProductPage = window.location.pathname.includes('product_list.php');
+            checkInventoryAlerts(isProductPage);
+        });
     </script>
 
     <main id="main-content" class="max-w-6xl mx-auto px-4 pb-20 transition-all duration-300">
