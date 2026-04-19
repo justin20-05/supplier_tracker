@@ -22,18 +22,36 @@ $items_stmt->execute([$id]);
 $order_items = $items_stmt->fetchAll();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $status = trim($_POST['status']);
+    $new_status = trim($_POST['status']);
+    $old_status = $order['status'];
     $expected_date = $_POST['expected_date'];
     $quantities = $_POST['quantities'] ?? []; 
 
     try {
         $pdo->beginTransaction();
 
-        // Update basic order info
-        $update_order = $pdo->prepare("UPDATE delivery_orders SET expected_date = ?, status = ? WHERE order_id = ?");
-        $update_order->execute([$expected_date, $status, $id]);
+        // 1. STOCK REFUND LOGIC
+        // If the order is being changed TO cancelled FROM something else, give stock back
+        if (strtolower($new_status) === 'cancelled' && strtolower($old_status) !== 'cancelled') {
+            foreach ($order_items as $item) {
+                $refund = $pdo->prepare("UPDATE products SET stock = stock + ? WHERE product_id = ?");
+                // We use the quantity from the original order items
+                $refund->execute([$item['quantity'], $item['product_id']]);
+            }
+        }
+        // OPTIONAL: If changing FROM cancelled BACK TO active, deduct stock again
+        elseif (strtolower($new_status) !== 'cancelled' && strtolower($old_status) === 'cancelled') {
+            foreach ($order_items as $item) {
+                $deduct = $pdo->prepare("UPDATE products SET stock = stock - ? WHERE product_id = ?");
+                $deduct->execute([$item['quantity'], $item['product_id']]);
+            }
+        }
 
-        // Update quantities for each item
+        // 2. Update basic order info
+        $update_order = $pdo->prepare("UPDATE delivery_orders SET expected_date = ?, status = ? WHERE order_id = ?");
+        $update_order->execute([$expected_date, $new_status, $id]);
+
+        // 3. Update quantities for each item
         $update_item = $pdo->prepare("UPDATE order_items SET quantity = ? WHERE item_id = ? AND order_id = ?");
         foreach ($quantities as $item_id => $qty) {
             $update_item->execute([$qty, $item_id, $id]);
@@ -44,7 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: ../modules/order_list.php?msg=updated");
         exit();
     } catch (Exception $e) {
-        $pdo->rollBack();
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
         $error = "Update failed: " . $e->getMessage();
     }
 }

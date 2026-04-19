@@ -12,7 +12,7 @@ $message = "";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $supplier_id = (int)$_POST['supplier_id'];
     $expected_date = $_POST['expected_date'];
-    $status = $_POST['status'];
+    $status = $_POST['status']; // e.g., 'pending', 'completed', 'cancelled'
     $created_by = (int)$_SESSION['user_id'];
 
     $product_ids = $_POST['products'] ?? [];
@@ -21,26 +21,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         $pdo->beginTransaction();
 
-        // 1. Insert the main order
+        //  Insert the main order
         $stmt = $pdo->prepare("INSERT INTO delivery_orders (supplier_id, expected_date, status, created_by) VALUES (?, ?, ?, ?)");
         $stmt->execute([$supplier_id, $expected_date, $status, $created_by]);
         $order_id = $pdo->lastInsertId();
 
-        // 2. Prepare statements for items
+        // Prepare statements for items and stock updates
         $itemStmt = $pdo->prepare("INSERT INTO order_items (order_id, product_id, quantity, unit_price_at_order) VALUES (?, ?, ?, ?)");
         $priceStmt = $pdo->prepare("SELECT unit_price FROM products WHERE product_id = ?");
+        $stockStmt = $pdo->prepare("UPDATE products SET stock = stock - ? WHERE product_id = ?");
 
         foreach ($product_ids as $index => $p_id) {
             if (empty($p_id)) continue;
 
-            // Fetch current price
+            $qty = (int)$quantities[$index];
+
+            // Fetch current price for historical record
             $priceStmt->execute([$p_id]);
             $current_price = $priceStmt->fetchColumn();
-
-            $qty = (int)$quantities[$index];
             $unit_p = (float)$current_price;
 
+            // Insert into order_items
             $itemStmt->execute([$order_id, $p_id, $qty, $unit_p]);
+
+            // DEDUCT STOCK: Only if the order is NOT cancelled
+            if (strtolower($status) !== 'cancelled') {
+                $stockStmt->execute([$qty, $p_id]);
+            }
         }
 
         $pdo->commit();
@@ -69,8 +76,9 @@ include '../includes/header.php';
         <form method="POST" id="orderForm" class="space-y-6">
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Supplier</label>
-                <select name="supplier_id" id="supplier_id" required class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer">
-                    <option value="" disabled selected>Select a Supplier</option>
+                <select id="supplier-select" name="supplier_id" onchange="updateProductList()" required
+                    class="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none font-bold text-gray-700 focus:ring-2 focus:ring-blue-500/20 transition-all">
+                    <option value="" disabled selected>Select Supplier</option>
                     <?php foreach ($suppliers as $s): ?>
                         <option value="<?= $s['supplier_id'] ?>"><?= htmlspecialchars($s['name']) ?></option>
                     <?php endforeach; ?>
@@ -113,52 +121,74 @@ include '../includes/header.php';
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const supplierSelect = document.getElementById('supplier_id');
+        const supplierSelect = document.getElementById('supplier-select');
         const itemsContainer = document.getElementById('items-container');
         const addItemBtn = document.getElementById('add-item-btn');
         let availableProducts = [];
 
-        supplierSelect.addEventListener('change', async function() {
-            const supplierId = this.value;
-            const response = await fetch(`get_products.php?supplier_id=${supplierId}`);
-            availableProducts = await response.json();
+        function updateProductList() {
+            const supplierId = supplierSelect.value;
 
-            itemsContainer.innerHTML = '';
-            addItemBtn.disabled = false;
+            // Pointing to the action file that filters products by supplier
+            fetch(`../actions/get_products_by_supplier.php?supplier_id=${supplierId}`)
+                .then(response => response.json())
+                .then(products => {
+                    availableProducts = products;
+                    itemsContainer.innerHTML = '';
+                    addItemBtn.disabled = false;
 
-            if (availableProducts.length > 0) {
-                addItemRow();
-            } else {
-                itemsContainer.innerHTML = '<p class="text-red-400 text-sm text-center py-4">This supplier has no products registered.</p>';
-            }
-        });
+                    if (availableProducts.length > 0) {
+                        addItemRow();
+                    } else {
+                        itemsContainer.innerHTML = `
+                            <div class="col-span-full p-6 bg-amber-50 border border-amber-100 rounded-2xl text-center">
+                                <p class="text-amber-600 text-sm font-bold uppercase tracking-widest">No Products Found</p>
+                                <p class="text-xs text-amber-500 mt-1">This supplier has no items registered in the inventory.</p>
+                            </div>`;
+                    }
+                })
+                .catch(error => console.error('Error fetching products:', error));
+        }
+
+        supplierSelect.addEventListener('change', updateProductList);
 
         addItemBtn.addEventListener('click', addItemRow);
 
         function addItemRow() {
             const row = document.createElement('div');
-            row.className = "flex gap-3 items-center bg-gray-50 p-3 rounded-2xl border border-gray-100 animate-in fade-in slide-in-from-top-2";
+            row.className = "flex gap-3 items-center bg-gray-50/50 p-3 rounded-2xl border border-gray-100 animate-in fade-in slide-in-from-top-2 transition-all";
 
-            let options = availableProducts.map(p => `<option value="${p.product_id}">${p.product_name} (₱${parseFloat(p.unit_price).toLocaleString()})</option>`).join('');
+            let options = availableProducts.map(p => {
+                const stockColor = p.stock <= 0 ? 'text-red-500' : 'text-gray-500';
+                return `<option value="${p.product_id}">
+                    ${p.product_name} — ₱${parseFloat(p.unit_price).toLocaleString()} (Stock: ${p.stock})
+                </option>`;
+            }).join('');
 
             row.innerHTML = `
-            <div class="flex-1">
-                <select name="products[]" required class="w-full p-3 bg-white border border-gray-200 rounded-xl outline-none text-sm font-semibold">
-                    <option value="">Select Product</option>
-                    ${options}
-                </select>
-            </div>
-            <div class="w-24">
-                <input type="number" name="quantities[]" min="1" value="1" required class="w-full p-3 bg-white border border-gray-200 rounded-xl outline-none text-sm font-bold text-blue-600 text-center" placeholder="Qty">
-            </div>
-            <button type="button" class="remove-btn text-red-400 hover:text-red-600 p-2 transition">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-            </button>
-        `;
+                <div class="flex-1">
+                    <select name="products[]" required class="w-full p-3 bg-white border border-gray-200 rounded-xl outline-none text-sm font-bold text-gray-700 focus:ring-2 focus:ring-blue-500/20">
+                        <option value="">Select Product</option>
+                        ${options}
+                    </select>
+                </div>
+                <div class="w-24">
+                    <input type="number" name="quantities[]" min="1" value="1" required 
+                           class="w-full p-3 bg-white border border-gray-200 rounded-xl outline-none text-sm font-black text-blue-600 text-center" 
+                           placeholder="Qty">
+                </div>
+                <button type="button" class="remove-btn text-red-400 hover:text-red-600 p-2 transition-all hover:scale-110 active:scale-95">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </button>
+            `;
 
             itemsContainer.appendChild(row);
+
             row.querySelector('.remove-btn').addEventListener('click', () => {
-                row.remove();
+                row.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => row.remove(), 200);
             });
         }
     });
