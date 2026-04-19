@@ -133,6 +133,7 @@ $hasFilters = $search || $supplier_id || $min_price || $max_price;
                 <th class="p-4 border-b">Product Code</th>
                 <th class="p-4 border-b">Product Name</th>
                 <th class="p-4 border-b">Supplier</th>
+                <th class="p-4 border-b">Stocks</th>
                 <th class="p-4 border-b text-right">Unit Price</th>
                 <th class="p-4 border-b text-center">Actions</th>
             </tr>
@@ -146,6 +147,16 @@ $hasFilters = $search || $supplier_id || $min_price || $max_price;
                         <span class="px-2 py-1 rounded-full text-[10px] font-bold uppercase bg-gray-100 text-gray-600">
                             <?= htmlspecialchars($p['supplier_name'] ?? 'Unassigned') ?>
                         </span>
+                    </td>
+                    <td class="px-6 py-5">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-gray-700"><?= number_format($p['stock']) ?></span>
+                            <?php if ($p['stock'] <= 0): ?>
+                                <span class="px-2 py-0.5 bg-red-100 text-red-600 text-[9px] font-black rounded-full uppercase">Out</span>
+                            <?php elseif ($p['stock'] <= 10): ?>
+                                <span class="px-2 py-0.5 bg-amber-100 text-amber-600 text-[9px] font-black rounded-full uppercase">Low</span>
+                            <?php endif; ?>
+                        </div>
                     </td>
                     <td class="p-4 font-black text-gray-900 text-right">₱<?= number_format($p['unit_price'], 2) ?></td>
                     <td class="p-4 text-center">
@@ -251,9 +262,11 @@ $hasFilters = $search || $supplier_id || $min_price || $max_price;
                 <p class="text-[10px] font-bold text-gray-400 uppercase">Unit Price</p>
                 <p class="font-bold text-gray-900 text-lg">₱${parseFloat(data.unit_price).toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
             </div>
-            <div class="p-4 ${data.stock < 10 ? 'bg-red-50' : 'bg-green-50'} rounded-2xl">
-                <p class="text-[10px] font-bold ${data.stock < 10 ? 'text-red-400' : 'text-green-400'} uppercase">Stock Level</p>
-                <p class="font-bold ${data.stock < 10 ? 'text-red-700' : 'text-green-700'} text-lg">${data.stock} units</p>
+            <div class="p-4 ${data.stock <= 10 ? 'bg-red-50' : 'bg-green-50'} rounded-2xl">
+                <p class="text-[10px] font-bold ${data.stock <= 10 ? 'text-red-400' : 'text-green-400'} uppercase tracking-widest">Stocks</p>
+                <p class="font-black ${data.stock <= 10 ? 'text-red-700' : 'text-green-700'} text-xl">
+                ${data.stock} <span class="text-xs font-bold uppercase ml-1">Units</span>
+                </p>
             </div>
         </div>`;
         document.getElementById('viewModal').classList.remove('hidden');

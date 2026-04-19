@@ -45,6 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.title = doc.title;
                 
                 mainContent.innerHTML = newElement.innerHTML;
+                
+                if (typeof checkInventoryAlerts === 'function') {
+                checkInventoryAlerts();
+                }
 
                 const scripts = mainContent.querySelectorAll('script');
                 scripts.forEach(oldScript => {

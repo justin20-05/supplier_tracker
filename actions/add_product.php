@@ -1,18 +1,19 @@
 <?php
 require '../config/db.php';
 
-// 1. PERFORM ALL LOGIC AND REDIRECTS BEFORE ANY OUTPUT
+//  PERFORM ALL LOGIC AND REDIRECTS BEFORE ANY OUTPUT
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $product_name = $_POST['product_name'];
-    $product_code = $_POST['product_code']; // Matches database schema
+    $product_code = $_POST['product_code']; 
     $supplier_id  = $_POST['supplier_id'];
     $unit_price   = $_POST['unit_price'];
+    $stock        = $_POST['stock'];
 
     try {
-        $sql = "INSERT INTO products (product_name, product_code, supplier_id, unit_price) 
-                VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO products (product_name, product_code, supplier_id, unit_price, stock) 
+                VALUES (?, ?, ?, ?, ?)";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$product_name, $product_code, $supplier_id, $unit_price]);
+        $stmt->execute([$product_name, $product_code, $supplier_id, $unit_price, $_POST['stock']]);
 
         header("Location: ../modules/product_list.php?msg=added");
         exit();
@@ -22,10 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// INCLUDE OUTPUT FILES
 include '../includes/header.php';
 
-// Fetch suppliers for the dropdown
 $suppliers = $pdo->query("SELECT supplier_id, name FROM suppliers ORDER BY name ASC")->fetchAll();
 ?>
 
@@ -67,6 +66,12 @@ $suppliers = $pdo->query("SELECT supplier_id, name FROM suppliers ORDER BY name 
                     <?php endforeach; ?>
                 </select>
             </div>
+        </div>
+
+        <div>
+            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Product's Stock</label>
+            <input type="number" name="stock" value="0" min="0" required 
+           class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold text-gray-700">
         </div>
 
         <div>

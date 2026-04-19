@@ -70,33 +70,33 @@ if ($current_page === 'dashboard.php' && $user_role !== 'Admin') {
                 <h1 class="font-black text-xl text-blue-600 tracking-tighter uppercase">Tracker Pro</h1>
 
                 <div class="hidden md:flex items-center space-x-8 text-[13px] font-bold uppercase tracking-wider">
-                    
+
                     <?php if ($user_role === 'Admin'): ?>
-                    <a href="../modules/dashboard.php"
-                        class="nav-link <?= ($current_page == 'dashboard.php') ? 'text-blue-600 nav-link-active' : 'text-gray-400 hover:text-gray-600' ?>">
-                        Dashboard
-                    </a>
+                        <a href="../modules/dashboard.php"
+                            class="nav-link <?= ($current_page == 'dashboard.php') ? 'text-blue-600 nav-link-active' : 'text-gray-400 hover:text-gray-600' ?>">
+                            Dashboard
+                        </a>
                     <?php endif; ?>
 
                     <?php if ($user_role === 'Admin' || $user_role === 'Supplier_Staff'): ?>
-                    <a href="../modules/supplier_list.php"
-                        class="nav-link <?= ($current_page == 'supplier_list.php' || $current_page == 'add_supplier.php') ? 'text-blue-600 nav-link-active' : 'text-gray-400 hover:text-gray-600' ?>">
-                        Suppliers
-                    </a>
+                        <a href="../modules/supplier_list.php"
+                            class="nav-link <?= ($current_page == 'supplier_list.php' || $current_page == 'add_supplier.php') ? 'text-blue-600 nav-link-active' : 'text-gray-400 hover:text-gray-600' ?>">
+                            Suppliers
+                        </a>
                     <?php endif; ?>
 
                     <?php if ($user_role === 'Admin' || $user_role === 'Product_Staff'): ?>
-                    <a href="../modules/product_list.php"
-                        class="nav-link <?= ($current_page == 'product_list.php' || $current_page == 'add_product.php') ? 'text-blue-600 nav-link-active' : 'text-gray-400 hover:text-gray-600' ?>">
-                        Products
-                    </a>
+                        <a href="../modules/product_list.php"
+                            class="nav-link <?= ($current_page == 'product_list.php' || $current_page == 'add_product.php') ? 'text-blue-600 nav-link-active' : 'text-gray-400 hover:text-gray-600' ?>">
+                            Products
+                        </a>
                     <?php endif; ?>
 
                     <?php if ($user_role === 'Admin' || $user_role === 'Order_Staff'): ?>
-                    <a href="../modules/order_list.php"
-                        class="nav-link <?= ($current_page == 'order_list.php' || $current_page == 'add_order.php') ? 'text-blue-600 nav-link-active' : 'text-gray-400 hover:text-gray-600' ?>">
-                        Orders
-                    </a>
+                        <a href="../modules/order_list.php"
+                            class="nav-link <?= ($current_page == 'order_list.php' || $current_page == 'add_order.php') ? 'text-blue-600 nav-link-active' : 'text-gray-400 hover:text-gray-600' ?>">
+                            Orders
+                        </a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -191,6 +191,27 @@ if ($current_page === 'dashboard.php' && $user_role !== 'Admin') {
                 document.body.style.overflow = 'auto';
             }
         }
+    </script>
+
+    <script>
+        async function checkInventoryAlerts() {
+            try {
+                const response = await fetch('../actions/check_stock.php');
+                const lowStockItems = await response.json();
+
+                lowStockItems.forEach(item => {
+                    if (item.stock == 0) {
+                        showToast(`CRITICAL: ${item.product_name} is out of stock!`, 'error');
+                    } else {
+                        showToast(`${item.product_name} is low on stock (${item.stock} left)`, 'warning');
+                    }
+                });
+            } catch (err) {
+                console.log('Stock check skip');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', checkInventoryAlerts);
     </script>
 
     <main id="main-content" class="max-w-6xl mx-auto px-4 pb-20 transition-all duration-300">

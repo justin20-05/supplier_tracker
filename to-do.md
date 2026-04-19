@@ -1,8 +1,9 @@
-**DONE** 
-**NOT YET DONE**
+🔴 **To be Fixed**
+🟡 **In Progress**
+🟢 **Done**
 
-**Tasks for Week 1**
 
+**Tasks for Week 1** 🟢
 - create database
 - login
 Setup XAMPP, create the 5 tables, build the Login/Session logic in PHP.
@@ -25,9 +26,11 @@ Implement the Dashboard using the CTE/Subqueries. Add CSS/Tailwind for a profess
 
 - Determine the flow of the System
 
-**ORDER MODULE**
+🔴 **To be Fixed**
+Exporting Data: Generating PDF or Excel reports for your Orders. 🟡 **In Progress**
 
-**PRODUCT MODULE**
+Real-time Notifications: Adding "Toast" messages when a product is low on stock. 🟢 **Done**
 
-**SUPPLIERS MODULE**
+Data Security: Implementing more advanced role-based access for your staff.
+
 

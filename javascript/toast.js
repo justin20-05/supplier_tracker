@@ -41,6 +41,11 @@ if (typeof window.toastInitialized === 'undefined') {
             toast.classList.add('opacity-0', 'translate-x-2');
             setTimeout(() => toast.remove(), 300);
         }, 3500);
+
+        
+let bgColor = 'bg-green-50 border-green-200 text-green-800'; 
+if (type === 'warning') bgColor = 'bg-amber-50 border-amber-200 text-amber-800'; 
+if (type === 'error') bgColor = 'bg-red-50 border-red-200 text-red-800';
     }
     
     function checkUrlMessages() {
