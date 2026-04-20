@@ -30,49 +30,53 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     async function loadPage(url, pushState = true) {
-    updateActiveLink(url);
-    mainContent.style.opacity = '0';
-    mainContent.style.transform = 'translateY(10px)';
+        updateActiveLink(url);
+        mainContent.style.opacity = '0';
+        mainContent.style.transform = 'translateY(10px)';
 
-    try {
-        const response = await fetch(url);
-        const text = await response.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(text, 'text/html');
-        const newElement = doc.getElementById('main-content');
-        
-        const isProductPage = url.includes('product_list.php');
-
-        if (newElement) {
-            document.title = doc.title;
+        try {
+            const response = await fetch(url);
+            const text = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'text/html');
+            const newElement = doc.getElementById('main-content');
             
-            mainContent.innerHTML = newElement.innerHTML;
+            const isProductPage = url.includes('product_list.php');
 
-            const scripts = mainContent.querySelectorAll('script');
-            scripts.forEach(oldScript => {
-                const newScript = document.createElement('script');
-                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-                oldScript.parentNode.replaceChild(newScript, oldScript);
-            });
+            if (newElement) {
+                document.title = doc.title;
+                
+                mainContent.innerHTML = newElement.innerHTML;
 
-            if (pushState) window.history.pushState({}, '', url);
+                const scripts = mainContent.querySelectorAll('script');
+                scripts.forEach(oldScript => {
+                    const newScript = document.createElement('script');
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
 
-            mainContent.style.opacity = '1';
-            mainContent.style.transform = 'translateY(0)';
+                if (pushState) window.history.pushState({}, '', url);
 
-            if (typeof checkInventoryAlerts === 'function') {
-                checkInventoryAlerts(isProductPage);
+                mainContent.style.opacity = '1';
+                mainContent.style.transform = 'translateY(0)';
+
+                if (url.includes('add_order.php') && typeof initAddOrder === 'function') {
+                    initAddOrder();
+                }
+
+                if (typeof checkInventoryAlerts === 'function') {
+                    checkInventoryAlerts(isProductPage);
+                }
+
+            } else {
+                window.location.href = url;
             }
-
-        } else {
+        } catch (error) {
+            console.error('Smooth navigation failed:', error);
             window.location.href = url;
         }
-    } catch (error) {
-        console.error('Smooth navigation failed:', error);
-        window.location.href = url;
     }
-}
 
     function updateActiveLink(url) {
         const navLinks = document.querySelectorAll('.nav-link');
