@@ -25,6 +25,13 @@ Build the Order Entry and Tracking modules.
 Implement the Dashboard using the CTE/Subqueries. Add CSS/Tailwind for a professional look.
 
 - Determine the flow of the System
+- role admin can change his password in the profile
+- email verification
+- fix Add new order
+- fix view items in orders
+- fix view button in all modules
+- fix delete button in all modules
+- View category add edit button
 
 🔴 **To be Fixed**
 Exporting Data: Generating PDF or Excel reports for your Orders. 🟡 **In Progress**
