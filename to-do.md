@@ -25,7 +25,6 @@ Build the Order Entry and Tracking modules.
 Implement the Dashboard using the CTE/Subqueries. Add CSS/Tailwind for a professional look.
 
 - role admin can change his password in the profile
-- email verification
 - fix Add new order 🟢 **Done**
 - fix view items in orders
 - fix view button in all modules

@@ -79,19 +79,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateActiveLink(url) {
-        const navLinks = document.querySelectorAll('.nav-link');
-        const targetPage = url.split('/').pop().split('?')[0];
+    const navLinks = document.querySelectorAll('.nav-link');
+    const targetPage = url.split('/').pop().split('?')[0];
 
-        navLinks.forEach(link => {
-            const linkPage = link.getAttribute('href').split('/').pop();
+    navLinks.forEach(link => {
+        const linkHref = link.getAttribute('href');
+        if (!linkHref) return;
+
+        const linkPage = linkHref.split('/').pop();
+        
+        if (targetPage === linkPage) {
+            link.classList.add('text-blue-600', 'nav-link-active');
+            link.classList.remove('text-gray-400');
             
-            if (targetPage === linkPage) {
-                link.classList.add('text-blue-600', 'nav-link-active');
-                link.classList.remove('text-gray-400');
-            } else {
-                link.classList.remove('text-blue-600', 'nav-link-active');
-                link.classList.add('text-gray-400');
-            }
-        });
-    }
+            const icon = link.querySelector('svg');
+            if (icon) icon.classList.add('text-blue-600');
+        } else {
+            link.classList.remove('text-blue-600', 'nav-link-active');
+            link.classList.add('text-gray-400');
+            
+            const icon = link.querySelector('svg');
+            if (icon) icon.classList.remove('text-blue-600');
+        }
+    });
+}
 });
