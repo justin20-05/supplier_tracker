@@ -24,17 +24,8 @@ Build the Order Entry and Tracking modules.
 - Reporting & UI
 Implement the Dashboard using the CTE/Subqueries. Add CSS/Tailwind for a professional look.
 
-- role admin can change his password in the profile
-- fix Add new order 🟢 **Done**
-- fix view items in orders
-- fix view button in all modules
-- fix delete button in all modules
-- View category add edit button
 
-🔴 **To be Fixed**
-Exporting Data: Generating PDF or Excel reports for your Orders. 🟢 **Done**
-
-Real-time Notifications: Adding "Toast" messages when a product is low on stock. 🟢 **Done**
+- make the export in pdf not csv 🟡 **In Progress**
 
 Data Security: Implementing more advanced role-based access for your staff.
 

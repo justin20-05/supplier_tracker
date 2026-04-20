@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (link && 
             link.href.includes(window.location.origin) && 
             !link.getAttribute('target') && 
+            !link.hasAttribute('download') &&
+            link.dataset.noSmoothNav !== 'true' &&
             !link.href.includes('logout.php')) {
             
             e.preventDefault();
@@ -16,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('submit', async (e) => {
         const form = e.target;
-        if (form.method.toLowerCase() === 'get') {
+        if (form.method.toLowerCase() === 'get' && form.dataset.noSmoothNav !== 'true') {
             e.preventDefault();
             const formData = new FormData(form);
             const params = new URLSearchParams(formData).toString();
@@ -32,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadPage(url, pushState = true) {
         updateActiveLink(url);
         mainContent.style.opacity = '0';
-        mainContent.style.transform = 'translateY(10px)';
 
         try {
             const response = await fetch(url);
@@ -59,7 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (pushState) window.history.pushState({}, '', url);
 
                 mainContent.style.opacity = '1';
-                mainContent.style.transform = 'translateY(0)';
 
                 if (url.includes('add_order.php') && typeof initAddOrder === 'function') {
                     initAddOrder();

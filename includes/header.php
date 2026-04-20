@@ -36,6 +36,8 @@ if ($current_page === 'dashboard.php' && $user_role !== 'Admin') {
 </head>
 
 <body class="bg-gray-50">
+    <iframe name="download-frame" class="hidden" aria-hidden="true"></iframe>
+
     <div id="logoutModal" class="fixed inset-0 z-[100] hidden">
         <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
 
@@ -228,4 +230,4 @@ if ($current_page === 'dashboard.php' && $user_role !== 'Admin') {
         });
     </script>
 
-    <main id="main-content" class="max-w-6xl mx-auto px-4 pb-20 transition-all duration-300">
+    <main id="main-content" class="max-w-6xl mx-auto px-4 pb-20 transition-opacity duration-300">
