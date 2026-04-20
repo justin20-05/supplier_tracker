@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="glass-panel p-10 rounded-3xl shadow-2xl border border-white/20">
             <div class="text-center mb-8">
                 <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Welcome Back</h1>
-                <p class="text-slate-500 mt-2 text-sm">Supplier Delivery Management System</p>
+                <p class="text-slate-500 mt-2 text-sm">Supplier Delivery Tracker System</p>
             </div>
 
             <?php if ($error): ?>
