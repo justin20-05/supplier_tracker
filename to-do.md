@@ -34,7 +34,7 @@ Implement the Dashboard using the CTE/Subqueries. Add CSS/Tailwind for a profess
 - View category add edit button
 
 🔴 **To be Fixed**
-Exporting Data: Generating PDF or Excel reports for your Orders. 🟡 **In Progress**
+Exporting Data: Generating PDF or Excel reports for your Orders. 🟢 **Done**
 
 Real-time Notifications: Adding "Toast" messages when a product is low on stock. 🟢 **Done**
 
