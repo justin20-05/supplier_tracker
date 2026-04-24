@@ -1,5 +1,6 @@
 <?php
 require '../config/db.php';
+require 'export_excel_helpers.php';
 
 date_default_timezone_set('Asia/Manila');
 
@@ -48,48 +49,26 @@ $totalOrders = count($orders);
 $totalQuantity = array_sum(array_map(static fn($order) => (float) $order['total_quantity'], $orders));
 $totalValue = array_sum(array_map(static fn($order) => (float) $order['total_order_value'], $orders));
 
-header('Content-Type: text/csv; charset=UTF-8');
-header('Content-Disposition: attachment; filename="orders_export.csv"');
-
-$output = fopen('php://output', 'w');
-fputs($output, "\xEF\xBB\xBF");
-
-function writeSectionTitle($handle, $title)
-{
-    fputcsv($handle, [$title]);
-}
-
-function writeKeyValueRows($handle, array $rows)
-{
-    foreach ($rows as $label => $value) {
-        fputcsv($handle, [$label, $value]);
-    }
-}
-
-fputcsv($output, ['SUPPLIER TRACKER ORDERS REPORT']);
-fputcsv($output, ['Generated On', date('F d, Y h:i A')]);
-fputcsv($output, []);
-
-writeSectionTitle($output, 'FILTER SUMMARY');
-writeKeyValueRows($output, [
+$filterRows = [];
+foreach ([
     'Supplier Filter' => $supplierName,
     'Status Filter' => $status_filter !== '' ? $status_filter : 'All Statuses',
-]);
-fputcsv($output, []);
+] as $label => $value) {
+    $filterRows[] = [$label, $value];
+}
 
-writeSectionTitle($output, 'REPORT SUMMARY');
-writeKeyValueRows($output, [
+$summaryRows = [];
+foreach ([
     'Total Orders' => $totalOrders,
     'Total Quantity' => number_format($totalQuantity, 0),
     'Total Order Value (PHP)' => number_format($totalValue, 2),
-]);
-fputcsv($output, []);
+] as $label => $value) {
+    $summaryRows[] = [$label, $value];
+}
 
-writeSectionTitle($output, 'ORDER DETAILS');
-fputcsv($output, ['No.', 'Order ID', 'Supplier', 'Expected Date', 'Status', 'Total Quantity', 'Total Value (PHP)']);
-
+$orderRows = [];
 foreach ($orders as $index => $order) {
-    fputcsv($output, [
+    $orderRows[] = [
         $index + 1,
         'ORD-' . $order['order_id'],
         $order['supplier_name'] ?? 'N/A',
@@ -97,9 +76,27 @@ foreach ($orders as $index => $order) {
         $order['status'],
         $order['total_quantity'],
         number_format($order['total_order_value'], 2),
-    ]);
+    ];
 }
 
-fclose($output);
-exit;
+outputExcelReport('orders_export.xls', 'SUPPLIER TRACKER ORDERS REPORT', [
+    [
+        'title' => 'FILTER SUMMARY',
+        'colspan' => 2,
+        'headers' => [],
+        'rows' => $filterRows,
+    ],
+    [
+        'title' => 'REPORT SUMMARY',
+        'colspan' => 2,
+        'headers' => [],
+        'rows' => $summaryRows,
+    ],
+    [
+        'title' => 'ORDER DETAILS',
+        'colspan' => 7,
+        'headers' => ['No.', 'Order ID', 'Supplier', 'Expected Date', 'Status', 'Total Quantity', 'Total Value (PHP)'],
+        'rows' => $orderRows,
+    ],
+]);
 ?>

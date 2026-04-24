@@ -1,5 +1,6 @@
 <?php
 require '../config/db.php';
+require 'export_excel_helpers.php';
 
 date_default_timezone_set('Asia/Manila');
 
@@ -40,57 +41,53 @@ $totalSuppliers = count($suppliers);
 $categories = array_unique(array_filter(array_map(static fn($supplier) => $supplier['category'] ?? '', $suppliers)));
 sort($categories);
 
-header('Content-Type: text/csv; charset=UTF-8');
-header('Content-Disposition: attachment; filename="suppliers_export.csv"');
-
-$output = fopen('php://output', 'w');
-fputs($output, "\xEF\xBB\xBF");
-
-function writeSectionTitle($handle, $title)
-{
-    fputcsv($handle, [$title]);
-}
-
-function writeKeyValueRows($handle, array $rows)
-{
-    foreach ($rows as $label => $value) {
-        fputcsv($handle, [$label, $value]);
-    }
-}
-
-fputcsv($output, ['SUPPLIER TRACKER SUPPLIERS REPORT']);
-fputcsv($output, ['Generated On', date('F d, Y h:i A')]);
-fputcsv($output, []);
-
-writeSectionTitle($output, 'FILTER SUMMARY');
-writeKeyValueRows($output, [
+$filterRows = [];
+foreach ([
     'Search Keyword' => $search !== '' ? $search : 'None',
     'Category Filter' => $cat_filter !== '' ? $cat_filter : 'All Categories',
     'Supplier Name Filter' => $name_filter !== '' ? $name_filter : 'All Suppliers',
-]);
-fputcsv($output, []);
+] as $label => $value) {
+    $filterRows[] = [$label, $value];
+}
 
-writeSectionTitle($output, 'REPORT SUMMARY');
-writeKeyValueRows($output, [
+$summaryRows = [];
+foreach ([
     'Total Suppliers' => $totalSuppliers,
     'Categories Found' => !empty($categories) ? implode(', ', $categories) : 'None',
-]);
-fputcsv($output, []);
+] as $label => $value) {
+    $summaryRows[] = [$label, $value];
+}
 
-writeSectionTitle($output, 'SUPPLIER DETAILS');
-fputcsv($output, ['No.', 'Vendor Name', 'Category', 'Contact Person', 'Email', 'Phone']);
-
+$supplierRows = [];
 foreach ($suppliers as $index => $supplier) {
-    fputcsv($output, [
+    $supplierRows[] = [
         $index + 1,
         $supplier['name'],
         $supplier['category'],
         $supplier['contact_person'],
         $supplier['email'],
         $supplier['phone'],
-    ]);
+    ];
 }
 
-fclose($output);
-exit;
+outputExcelReport('suppliers_export.xls', 'SUPPLIER TRACKER SUPPLIERS REPORT', [
+    [
+        'title' => 'FILTER SUMMARY',
+        'colspan' => 2,
+        'headers' => [],
+        'rows' => $filterRows,
+    ],
+    [
+        'title' => 'REPORT SUMMARY',
+        'colspan' => 2,
+        'headers' => [],
+        'rows' => $summaryRows,
+    ],
+    [
+        'title' => 'SUPPLIER DETAILS',
+        'colspan' => 6,
+        'headers' => ['No.', 'Vendor Name', 'Category', 'Contact Person', 'Email', 'Phone'],
+        'rows' => $supplierRows,
+    ],
+]);
 ?>

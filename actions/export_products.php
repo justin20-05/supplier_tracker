@@ -1,5 +1,6 @@
 <?php
 require '../config/db.php';
+require 'export_excel_helpers.php';
 
 date_default_timezone_set('Asia/Manila');
 
@@ -56,59 +57,55 @@ $totalInventoryValue = array_sum(array_map(
     $products
 ));
 
-header('Content-Type: text/csv; charset=UTF-8');
-header('Content-Disposition: attachment; filename="products_export.csv"');
-
-$output = fopen('php://output', 'w');
-fputs($output, "\xEF\xBB\xBF");
-
-function writeSectionTitle($handle, $title)
-{
-    fputcsv($handle, [$title]);
-}
-
-function writeKeyValueRows($handle, array $rows)
-{
-    foreach ($rows as $label => $value) {
-        fputcsv($handle, [$label, $value]);
-    }
-}
-
-fputcsv($output, ['SUPPLIER TRACKER PRODUCTS REPORT']);
-fputcsv($output, ['Generated On', date('F d, Y h:i A')]);
-fputcsv($output, []);
-
-writeSectionTitle($output, 'FILTER SUMMARY');
-writeKeyValueRows($output, [
+$filterRows = [];
+foreach ([
     'Search Keyword' => $search !== '' ? $search : 'None',
     'Supplier Filter' => $supplierName,
     'Minimum Price' => $min_price !== '' ? number_format((float) $min_price, 2) : 'None',
     'Maximum Price' => $max_price !== '' ? number_format((float) $max_price, 2) : 'None',
-]);
-fputcsv($output, []);
+] as $label => $value) {
+    $filterRows[] = [$label, $value];
+}
 
-writeSectionTitle($output, 'REPORT SUMMARY');
-writeKeyValueRows($output, [
+$summaryRows = [];
+foreach ([
     'Total Products' => $totalProducts,
     'Total Stock' => number_format($totalStock, 0),
     'Estimated Inventory Value (PHP)' => number_format($totalInventoryValue, 2),
-]);
-fputcsv($output, []);
+] as $label => $value) {
+    $summaryRows[] = [$label, $value];
+}
 
-writeSectionTitle($output, 'PRODUCT DETAILS');
-fputcsv($output, ['No.', 'Product Code', 'Product Name', 'Supplier', 'Stock', 'Unit Price (PHP)']);
-
+$productRows = [];
 foreach ($products as $index => $product) {
-    fputcsv($output, [
+    $productRows[] = [
         $index + 1,
         $product['product_code'],
         $product['product_name'],
         $product['supplier_name'] ?? 'Unassigned',
         $product['stock'],
         number_format($product['unit_price'], 2),
-    ]);
+    ];
 }
 
-fclose($output);
-exit;
+outputExcelReport('products_export.xls', 'SUPPLIER TRACKER PRODUCTS REPORT', [
+    [
+        'title' => 'FILTER SUMMARY',
+        'colspan' => 2,
+        'headers' => [],
+        'rows' => $filterRows,
+    ],
+    [
+        'title' => 'REPORT SUMMARY',
+        'colspan' => 2,
+        'headers' => [],
+        'rows' => $summaryRows,
+    ],
+    [
+        'title' => 'PRODUCT DETAILS',
+        'colspan' => 6,
+        'headers' => ['No.', 'Product Code', 'Product Name', 'Supplier', 'Stock', 'Unit Price (PHP)'],
+        'rows' => $productRows,
+    ],
+]);
 ?>

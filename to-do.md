@@ -25,8 +25,6 @@ Build the Order Entry and Tracking modules.
 Implement the Dashboard using the CTE/Subqueries. Add CSS/Tailwind for a professional look.
 
 
-- make the export in pdf not csv 🟡 **In Progress**
-
 Data Security: Implementing more advanced role-based access for your staff.
 
 
