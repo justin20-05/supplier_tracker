@@ -71,64 +71,62 @@ $monthTotalsJSON = json_encode(array_column($monthlyData, 'total'));
     </header>
 
     <div class="stats-grid mb-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    <a href="../modules/supplier_list.php" class="group block">
-        <div class="stat-card h-full p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm group-hover:shadow-2xl group-hover:shadow-blue-100 group-hover:-translate-y-2 transition-all duration-300 flex items-center gap-6">
-            <div class="stat-icon w-14 h-14 shrink-0 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center transition-transform group-hover:scale-110">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-10V4a1 1 0 011-1h2a1 1 0 011 1v3M12 21v-3a1 1 0 011-1h2a1 1 0 011 1v3" />
-                </svg>
-            </div>
-            <div>
-                <p class="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Suppliers</p>
-                <h2 class="text-3xl font-black text-gray-900 tracking-tighter"><?= $suppliersCount ?></h2>
-            </div>
-        </div>
-    </a>
-
-    <a href="../modules/product_list.php" class="group block">
-        <div class="stat-card h-full p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm group-hover:shadow-2xl group-hover:shadow-green-100 group-hover:-translate-y-2 transition-all duration-300 flex items-center gap-6">
-            <div class="stat-icon w-14 h-14 shrink-0 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center transition-transform group-hover:scale-110">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-            </div>
-            <div>
-                <p class="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Products</p>
-                <h2 class="text-3xl font-black text-gray-900 tracking-tighter"><?= $productsCount ?></h2>
-            </div>
-        </div>
-    </a>
-
-    <a href="../modules/order_list.php" class="group block">
-        <div class="stat-card h-full p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm group-hover:shadow-2xl group-hover:shadow-purple-100 group-hover:-translate-y-2 transition-all duration-300 flex items-center gap-6">
-            <div class="stat-icon w-14 h-14 shrink-0 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center transition-transform group-hover:scale-110">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-            </div>
-            <div>
-                <p class="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Orders</p>
-                <h2 class="text-3xl font-black text-gray-900 tracking-tighter"><?= $ordersCount ?></h2>
-            </div>
-        </div>
-    </a>
-
-    <a href="../modules/order_list.php?status=Received" class="group block">
-        <div class="stat-card h-full p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm group-hover:shadow-2xl group-hover:shadow-emerald-100 group-hover:-translate-y-2 transition-all duration-300 flex flex-col justify-center">
-            <div class="flex items-center gap-6">
-                <div class="stat-icon w-14 h-14 shrink-0 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center transition-transform group-hover:scale-110">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <a href="../modules/supplier_list.php" class="group block">
+            <div class="stat-card h-full p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm group-hover:shadow-2xl group-hover:shadow-blue-100 group-hover:-translate-y-2 transition-all duration-300 flex items-center gap-6">
+                <div class="stat-icon w-14 h-14 shrink-0 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center transition-transform group-hover:scale-110">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-10V4a1 1 0 011-1h2a1 1 0 011 1v3M12 21v-3a1 1 0 011-1h2a1 1 0 011 1v3" />
                     </svg>
                 </div>
                 <div>
-                    <p class="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Revenue</p>
-                    <h2 class="text-2xl font-black text-emerald-600 tracking-tighter">₱<?= number_format($totalRevenue, 2) ?></h2>
+                    <p class="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Suppliers</p>
+                    <h2 class="text-3xl font-black text-gray-900 tracking-tighter"><?= $suppliersCount ?></h2>
                 </div>
             </div>
-        </div>
-    </a>
-</div>
+        </a>
+
+        <a href="../modules/product_list.php" class="group block">
+            <div class="stat-card h-full p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm group-hover:shadow-2xl group-hover:shadow-green-100 group-hover:-translate-y-2 transition-all duration-300 flex items-center gap-6">
+                <div class="stat-icon w-14 h-14 shrink-0 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center transition-transform group-hover:scale-110">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Products</p>
+                    <h2 class="text-3xl font-black text-gray-900 tracking-tighter"><?= $productsCount ?></h2>
+                </div>
+            </div>
+        </a>
+
+        <a href="../modules/order_list.php" class="group block">
+            <div class="stat-card h-full p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm group-hover:shadow-2xl group-hover:shadow-purple-100 group-hover:-translate-y-2 transition-all duration-300 flex items-center gap-6">
+                <div class="stat-icon w-14 h-14 shrink-0 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center transition-transform group-hover:scale-110">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Orders</p>
+                    <h2 class="text-3xl font-black text-gray-900 tracking-tighter"><?= $ordersCount ?></h2>
+                </div>
+            </div>
+        </a>
+
+        <a href="../modules/order_list.php?status=Received" class="group block">
+            <div class="stat-card h-full p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm group-hover:shadow-2xl group-hover:shadow-emerald-100 group-hover:-translate-y-2 transition-all duration-300 flex flex-col justify-center">
+                <div class="flex items-center gap-6">
+                    <div class="stat-icon w-14 h-14 shrink-0 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center transition-transform group-hover:scale-110">
+                        <span class="text-2xl font-black">₱</span>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Revenue</p>
+                        <h2 class="text-2xl font-black text-emerald-600 tracking-tighter"><?= number_format($totalRevenue, 2) ?></h2>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
 
     <div class="charts-grid mb-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div class="chart-container bg-white p-8 border border-gray-100 rounded-[2.5rem]">

@@ -67,6 +67,10 @@ $stmt->execute($params);
 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $hasFilters = $search || $supplier_id || $min_price || $max_price;
+
+$totalProducts = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
+$lowStockCount = $pdo->query("SELECT COUNT(*) FROM products WHERE stock > 0 AND stock <= 10")->fetchColumn();
+$outofStockCount = $pdo->query("SELECT COUNT(*) FROM products WHERE stock = 0")->fetchColumn();
 ?>
 
 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -94,6 +98,59 @@ $hasFilters = $search || $supplier_id || $min_price || $max_price;
             Export Excel
         </a>
     </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+        <div class="flex items-center gap-5">
+            <div class="w-14 h-14 bg-yellow-50 text-yellow-600 rounded-2xl flex items-center justify-center group-hover:bg-yellow-500 group-hover:text-white transition-all duration-300">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 9v2m0 4h.01M10.29 3.86l-7.5 13A2 2 0 004.5 20h15a2 2 0 001.71-3.14l-7.5-13a2 2 0 00-3.42 0z"/>
+                </svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Inventory Health</p>
+                <h3 class="text-2xl font-black text-gray-900"><?= $lowStockCount ?> 
+                    <span class="text-sm font-bold text-gray-400 ml-1 uppercase">Low Stock</span>
+                </h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+        <div class="flex items-center gap-5">
+            <div class="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center group-hover:bg-red-600 group-hover:text-white transition-all duration-300">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Inventory Health</p>
+                <h3 class="text-2xl font-black text-gray-900"><?= $outofStockCount ?> 
+                    <span class="text-sm font-bold text-gray-400 ml-1 uppercase">Out of Stock</span>
+                </h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+        <div class="flex items-center gap-5">
+            <div class="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all duration-300">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4L4 7m0 0v10l8 4"/>
+                </svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Catalog Size</p>
+                <h3 class="text-2xl font-black text-gray-900"><?= $totalProducts ?> 
+                    <span class="text-sm font-bold text-gray-400 ml-1 uppercase">Products</span>
+                </h3>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <form method="GET" action="product_list.php" class="bg-white p-4 rounded-lg shadow-sm border mb-6">

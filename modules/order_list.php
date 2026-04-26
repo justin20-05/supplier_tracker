@@ -7,6 +7,23 @@ $limit = 10;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
+//For StatCards
+// Count Pending Orders
+$pendingOrders = $pdo->query("SELECT COUNT(*) FROM delivery_orders WHERE status = 'Pending'")->fetchColumn();
+
+// Cancelled Orders
+$cancelledOrders = $pdo->query("SELECT COUNT(*) FROM delivery_orders WHERE status = 'Cancelled'")->fetchColumn();
+
+// Received Orders
+$receivedOrders = $pdo->query("SELECT COUNT(*) FROM delivery_orders WHERE status = 'Received'")->fetchColumn();
+
+//Sum for orders
+$totalValue = $pdo->query("
+    SELECT SUM(quantity * unit_price_at_order)
+    FROM order_items
+")->fetchColumn() ?: 0;
+
+
 $supplier_filter = $_GET['supplier_id'] ?? '';
 $status_filter   = $_GET['status'] ?? '';
 
@@ -85,6 +102,68 @@ $hasFilters = $supplier_filter || $status_filter;
             Export Excel
         </a>
     </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+
+    <!-- Pending -->
+    <div class="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+        <div class="flex items-center gap-5">
+            <div class="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-all duration-500">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Pending Tasks</p>
+                <h3 class="text-2xl font-black text-gray-900"><?= number_format($pendingOrders) ?></h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancelled Orders -->
+    <div class="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+        <div class="flex items-center gap-5">
+            <div class="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all duration-500">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Cancelled Orders</p>
+                <h3 class="text-2xl font-black text-gray-900"><?= number_format($cancelledOrders) ?></h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Received Orders -->
+    <div class="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+        <div class="flex items-center gap-5">
+            <div class="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all duration-500">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Received Orders</p>
+                <h3 class="text-2xl font-black text-gray-900"><?= number_format($receivedOrders) ?></h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue  -->
+    <div class="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+        <div class="flex items-center gap-5">
+            <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-500">
+                <span class="text-2xl font-black">₱</span>
+            </div>
+            <div>
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Total Revenue</p>
+                <h3 class="text-2xl font-black text-gray-900"><?= number_format($totalValue, 2) ?></h3>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <form method="GET" action="order_list.php" class="bg-white p-4 rounded-lg shadow-sm border mb-6">

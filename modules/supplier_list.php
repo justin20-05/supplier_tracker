@@ -13,6 +13,9 @@ $name_filter = $_GET['name'] ?? '';
 
 $hasFilters = $search || $cat_filter || $name_filter;
 
+$totalSuppliers = $pdo->query("SELECT COUNT(*) FROM suppliers")->fetchColumn();
+$activeCategories = $pdo->query("SELECT COUNT(DISTINCT category) FROM suppliers")->fetchColumn();
+
 // Fetch dropdown data
 $categories = $pdo->query("SELECT category_name FROM categories ORDER BY category_name ASC")->fetchAll(PDO::FETCH_COLUMN);
 $names      = $pdo->query("SELECT DISTINCT name FROM suppliers ORDER BY name ASC")->fetchAll(PDO::FETCH_COLUMN);
@@ -91,6 +94,31 @@ $suppliers = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </div>
 
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+        <div class="flex items-center gap-5">
+            <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Total Network</p>
+                <h3 class="text-2xl font-black text-gray-900 leading-none"><?= $totalSuppliers ?> <span class="text-sm font-bold text-gray-400 ml-1 uppercase">Suppliers</span></h3>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+        <div class="flex items-center gap-5">
+            <div class="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all duration-300">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Market Reach</p>
+                <h3 class="text-2xl font-black text-gray-900 leading-none"><?= $activeCategories ?> <span class="text-sm font-bold text-gray-400 ml-1 uppercase">Categories</span></h3>
+            </div>
+        </div>
+    </div>
+</div>
+
 <form method="GET" action="supplier_list.php" class="bg-white p-4 rounded-lg shadow-sm border mb-6">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
@@ -100,9 +128,9 @@ $suppliers = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
         <div>
-            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1 ml-1">Vendor Name</label>
+            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1 ml-1">Suppliers Name</label>
             <select name="name" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-white font-medium text-gray-700">
-                <option value="">All Vendors</option>
+                <option value="">All Suppliers</option>
                 <?php foreach ($names as $n): ?>
                     <option value="<?= htmlspecialchars($n) ?>" <?= $name_filter == $n ? 'selected' : '' ?>>
                         <?= htmlspecialchars($n) ?>
@@ -136,7 +164,7 @@ $suppliers = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <table class="w-full text-left border-collapse">
         <thead>
             <tr class="bg-gray-50 text-gray-600 uppercase text-[11px] font-bold tracking-widest">
-                <th class="p-4 border-b">Vendor Name</th>
+                <th class="p-4 border-b">Supplier Name</th>
                 <th class="p-4 border-b">Contact</th>
                 <th class="p-4 border-b">Category</th>
                 <th class="p-4 border-b text-center">Actions</th>

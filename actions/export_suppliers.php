@@ -86,7 +86,7 @@ outputExcelReport('suppliers_export.xls', 'SUPPLIER TRACKER SUPPLIERS REPORT', [
     [
         'title' => 'SUPPLIER DETAILS',
         'colspan' => 6,
-        'headers' => ['No.', 'Vendor Name', 'Category', 'Contact Person', 'Email', 'Phone'],
+        'headers' => ['No.', 'Supplier Name', 'Category', 'Contact Person', 'Email', 'Phone'],
         'rows' => $supplierRows,
     ],
 ]);

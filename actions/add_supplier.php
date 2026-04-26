@@ -46,7 +46,7 @@ include '../includes/header.php';
 
     <form method="POST" class="space-y-6">
         <div>
-            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Vendor Name</label>
+            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Supplier Name</label>
             <input type="text" name="name" placeholder="Legal Business Name" required 
                    class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
         </div>
@@ -74,7 +74,7 @@ include '../includes/header.php';
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Email Address</label>
-                <input type="email" name="email" placeholder="vendor@example.com" required 
+                <input type="email" name="email" placeholder="supplier@example.com" required 
                        class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
             </div>
             <div>
