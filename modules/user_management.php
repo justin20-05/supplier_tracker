@@ -2,13 +2,11 @@
 require '../config/db.php';
 include '../includes/header.php';
 
-// Access Control for admin-only page
 if ($_SESSION['role'] !== 'Admin') {
     header("Location: dashboard.php");
     exit();
 }
 
-// UPDATED QUERY to fetch new columns
 $query = "SELECT user_id, username, first_name, middle_initial, last_name, role, created_at FROM users ORDER BY role ASC, first_name ASC";
 $users = $pdo->query($query)->fetchAll();
 
@@ -41,7 +39,6 @@ $err = $_GET['err'] ?? '';
         </thead>
         <tbody class="text-sm">
             <?php foreach ($users as $u): 
-                // Format the name display
                 $fullName = $u['first_name'] . ' ' . ($u['middle_initial'] ? $u['middle_initial'] . '. ' : '') . $u['last_name'];
             ?>
                 <tr class="hover:bg-blue-50/20 transition border-b border-gray-50 last:border-0">
@@ -62,6 +59,22 @@ $err = $_GET['err'] ?? '';
                     <td class="p-5 text-gray-800 font-medium"><?= date('M d, Y', strtotime($u['created_at'])) ?></td>
                     <td class="p-5">
                         <div class="flex items-center justify-center gap-2">
+                            <button type="button" 
+                                    class="view-btn p-2 text-green-500 bg-green-50 rounded-lg hover:bg-green-600 hover:text-white transition-all shadow-sm" 
+                                    title="View Details"
+                                    data-info='<?= htmlspecialchars(json_encode([
+                                        "Full Name" => $fullName,
+                                        "Username" => "@".$u['username'],
+                                        "Role" => str_replace('_', ' ', $u['role']),
+                                        "Account ID" => "#USR-".$u['user_id'],
+                                        "Joined Date" => date('F d, Y', strtotime($u['created_at']))
+                                    ])) ?>'>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </button>
+
                             <a href="../actions/edit_user.php?id=<?= $u['user_id'] ?>"
                                 class="p-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-600 hover:text-white transition-all shadow-sm" title="Edit User">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -88,10 +101,49 @@ $err = $_GET['err'] ?? '';
     </table>
 </div>
 
+<div id="viewModal" class="fixed inset-0 z-[120] hidden">
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-xl" onclick="closeViewModal()"></div>
+    
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xl p-6">
+        <div class="bg-white rounded-[3rem] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.14)] border border-white/20 overflow-hidden animate-in fade-in zoom-in duration-300">
+            
+            <div class="px-10 pt-10 pb-6 bg-gradient-to-b from-blue-50/50 to-transparent flex justify-between items-start">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/50 text-blue-700 text-[10px] font-black uppercase tracking-[0.2em] mb-3">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                        </span>
+                        User Profile
+                    </div>
+                    <h3 id="userNameDisplay" class="text-3xl font-black text-gray-900 tracking-tight leading-tight"></h3>
+                    <p id="userHandleDisplay" class="text-blue-600/80 font-bold text-lg italic"></p>
+                </div>
+                <button onclick="closeViewModal()" class="group p-3 bg-white shadow-sm border border-gray-100 hover:border-gray-200 rounded-2xl text-gray-400 hover:text-gray-900 transition-all">
+                    <svg class="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="px-10 pb-10">
+                <div id="userModalContent" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    </div>
+
+                <div class="mt-10 flex items-center gap-4">
+                    <button onclick="closeViewModal()" class="flex-1 py-5 bg-gray-900 text-white rounded-[1.5rem] font-black hover:bg-blue-600 transition-all duration-300 shadow-xl shadow-gray-200 uppercase tracking-[0.2em] text-[10px]">
+                        Close Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="deleteModal" class="fixed inset-0 z-[120] hidden">
-    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-md"></div>
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-md" onclick="closeDeleteModal()"></div>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm p-6">
-        <div class="bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 overflow-hidden text-center">
+        <div class="bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 overflow-hidden text-center animate-in fade-in zoom-in duration-200">
             <div class="p-10">
                 <div class="w-20 h-20 bg-red-100 text-red-600 rounded-3xl flex items-center justify-center mx-auto mb-6">
                     <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,6 +168,27 @@ $err = $_GET['err'] ?? '';
 </div>
 
 <script>
+    document.addEventListener('click', function(e) {
+        const vBtn = e.target.closest('.view-btn');
+        if (vBtn) {
+            const data = JSON.parse(vBtn.getAttribute('data-info'));
+            const content = document.getElementById('userModalContent');
+            
+            content.innerHTML = Object.entries(data).map(([key, value]) => `
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${key}</p>
+                    <p class="font-bold text-gray-800 text-lg">${value}</p>
+                </div>
+            `).join('');
+            
+            document.getElementById('viewModal').classList.remove('hidden');
+        }
+    });
+
+    function closeViewModal() {
+        document.getElementById('viewModal').classList.add('hidden');
+    }
+
     function openDeleteModal(id, name) {
         document.getElementById('deleteUserName').textContent = name;
         document.getElementById('confirmDeleteLink').href = "../actions/delete_user.php?id=" + id;
