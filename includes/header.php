@@ -69,7 +69,13 @@ if ($current_page === 'dashboard.php' && $user_role !== 'Admin') {
         <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
 
             <div class="flex items-center space-x-10">
-                <h1 class="font-black text-xl text-blue-600 tracking-tighter uppercase">Tracker Pro</h1>
+                <a href="../modules/dashboard.php" class="group flex items-center gap-2">
+                    <div class="w-2 h-2 bg-blue-600 rounded-full group-hover:animate-ping"></div>
+
+                    <h1 class="font-black text-xl text-blue-600 tracking-tighter uppercase transition-colors group-hover:text-slate-900">
+                        Tracker <span class="text-slate-900 group-hover:text-blue-600 transition-colors">Pro</span>
+                    </h1>
+                </a>
 
                 <div class="hidden md:flex items-center space-x-8 text-[13px] font-bold uppercase tracking-wider">
 
