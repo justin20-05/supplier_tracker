@@ -277,4 +277,6 @@ $suppliers = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 </script>
 
+<script src="../javascript/toast.js"></script>
+
 <?php include '../includes/footer.php'; ?>

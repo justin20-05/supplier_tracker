@@ -200,4 +200,6 @@ $err = $_GET['err'] ?? '';
     }
 </script>
 
+<script src="../javascript/toast.js"></script>
+
 <?php include '../includes/footer.php'; ?>

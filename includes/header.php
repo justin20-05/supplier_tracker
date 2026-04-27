@@ -154,6 +154,8 @@ if ($current_page === 'dashboard.php' && $user_role !== 'Admin') {
         </div>
     </nav>
 
+    <script src="../assets/js/toast.js"></script>
+
     <script>
         function toggleDropdown() {
             const menu = document.getElementById('dropdownMenu');

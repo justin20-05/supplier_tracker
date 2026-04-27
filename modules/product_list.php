@@ -344,4 +344,6 @@ $outofStockCount = $pdo->query("SELECT COUNT(*) FROM products WHERE stock = 0")-
     }
 </script>
 
+<script src="../javascript/toast.js"></script>
+
 <?php include '../includes/footer.php'; ?>

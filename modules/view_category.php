@@ -28,7 +28,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_category'])) {
 }
 
 $categories = $pdo->query("SELECT * FROM categories ORDER BY category_name ASC")->fetchAll();
+
+if ($stmt->execute([$name, $id])) {
+    header("Location: view_category.php?msg=updated");
+    exit();
+}
+
 ?>
+
+<script src="../javascript/toast.js"></script>
 
 <?php if (isset($_GET['msg']) && $_GET['msg'] === 'updated'): ?>
     <script>showToast("Category updated successfully!", "success");</script>

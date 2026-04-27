@@ -417,4 +417,6 @@ $hasFilters = $supplier_filter || $status_filter;
     }
 </script>
 
+<script src="../javascript/toast.js"></script>
+
 <?php include '../includes/footer.php'; ?>

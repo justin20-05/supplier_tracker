@@ -50,6 +50,11 @@ $stmt = $pdo->prepare("SELECT * FROM users WHERE user_id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch();
 
+if ($success_toast) {
+    header("Location: profile.php?msg=updated");
+    exit();
+}
+
 include '../includes/header.php';
 ?>
 

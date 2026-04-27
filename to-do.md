@@ -27,5 +27,5 @@ Implement the Dashboard using the CTE/Subqueries. Add CSS/Tailwind for a profess
 
 Data Security: Implementing more advanced role-based access for your staff.
 
-- fix ui for my profile
+- fix the toast its not showing a toast message.
 
