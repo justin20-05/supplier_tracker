@@ -122,8 +122,8 @@ $outofStockCount = $pdo->query("SELECT COUNT(*) FROM products WHERE stock = 0")-
         <div class="flex items-center gap-5">
             <div class="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center group-hover:bg-red-600 group-hover:text-white transition-all duration-300">
                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M6 18L18 6M6 6l12 12"/>
+                    <circle cx="12" cy="12" r="9" stroke-width="2"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9l6 6M15 9l-6 6"/>
                 </svg>
             </div>
             <div>

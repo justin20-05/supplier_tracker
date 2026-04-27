@@ -19,8 +19,10 @@ $receivedOrders = $pdo->query("SELECT COUNT(*) FROM delivery_orders WHERE status
 
 //Sum for orders
 $totalValue = $pdo->query("
-    SELECT SUM(quantity * unit_price_at_order)
-    FROM order_items
+    SELECT SUM(oi.quantity * oi.unit_price_at_order)
+    FROM order_items oi
+    JOIN delivery_orders o ON oi.order_id = o.order_id
+    WHERE o.status = 'Received'
 ")->fetchColumn() ?: 0;
 
 
@@ -107,26 +109,28 @@ $hasFilters = $supplier_filter || $status_filter;
 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
 
     <!-- Pending -->
-    <div class="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+    <div class="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-md transition-all group">
         <div class="flex items-center gap-5">
-            <div class="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-all duration-500">
+            <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-all duration-300">
                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <circle cx="12" cy="12" r="9" stroke-width="2"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7v5l3 3"/>
                 </svg>
             </div>
             <div>
-                <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Pending Tasks</p>
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Pending Orders</p>
                 <h3 class="text-2xl font-black text-gray-900"><?= number_format($pendingOrders) ?></h3>
             </div>
         </div>
     </div>
 
-    <!-- Cancelled Orders -->
-    <div class="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+    <!-- Cancelled -->
+    <div class="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-md transition-all group">
         <div class="flex items-center gap-5">
-            <div class="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all duration-500">
+            <div class="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center group-hover:bg-red-600 group-hover:text-white transition-all duration-300">
                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    <circle cx="12" cy="12" r="9" stroke-width="2"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9l6 6M15 9l-6 6"/>
                 </svg>
             </div>
             <div>
@@ -136,12 +140,13 @@ $hasFilters = $supplier_filter || $status_filter;
         </div>
     </div>
 
-    <!-- Received Orders -->
-    <div class="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+    <!-- Received -->
+    <div class="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-md transition-all group">
         <div class="flex items-center gap-5">
-            <div class="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all duration-500">
+            <div class="w-14 h-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center group-hover:bg-green-600 group-hover:text-white transition-all duration-300">
                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    <circle cx="12" cy="12" r="9" stroke-width="2"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12l3 3 5-5"/>
                 </svg>
             </div>
             <div>
@@ -151,10 +156,10 @@ $hasFilters = $supplier_filter || $status_filter;
         </div>
     </div>
 
-    <!-- Revenue  -->
-    <div class="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+    <!-- Revenue -->
+    <div class="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-md transition-all group">
         <div class="flex items-center gap-5">
-            <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-500">
+            <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
                 <span class="text-2xl font-black">₱</span>
             </div>
             <div>

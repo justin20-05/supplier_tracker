@@ -27,4 +27,6 @@ Implement the Dashboard using the CTE/Subqueries. Add CSS/Tailwind for a profess
 
 Data Security: Implementing more advanced role-based access for your staff.
 
+- add edit action in supplier categories
+
 
