@@ -24,9 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <div class="max-w-xl mx-auto mt-10">
     <div class="mb-6 flex items-center justify-between">
-        <a href="../modules/supplier_list.php" class="text-sm font-bold text-gray-400 hover:text-blue-600 transition flex items-center">
+        <a href="../modules/view_category.php" class="text-sm font-bold text-gray-400 hover:text-blue-600 transition flex items-center">
             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-            Back to Suppliers
+            Back to Category List
         </a>
     </div>
 

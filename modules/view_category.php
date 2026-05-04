@@ -5,10 +5,10 @@ include '../includes/header.php';
 // 1. Handle Delete Logic
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
-    $stmt = $pdo->prepare("DELETE FROM categories WHERE category_id = ?");
-    if ($stmt) {
+    $deleteStmt = $pdo->prepare("DELETE FROM categories WHERE category_id = ?");
+    if ($deleteStmt) {
         try {
-            $stmt->execute([$id]);
+            $deleteStmt->execute([$id]);
             header("Location: view_category.php?msg=deleted");
             exit();
         } catch (PDOException $e) {
@@ -22,8 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_category'])) {
     $id = $_POST['category_id'];
     $name = $_POST['category_name'];
     
-    $stmt = $pdo->prepare("UPDATE categories SET category_name = ? WHERE category_id = ?");
-    if ($stmt && $stmt->execute([$name, $id])) {
+    $updateStmt = $pdo->prepare("UPDATE categories SET category_name = ? WHERE category_id = ?");
+    if ($updateStmt && $updateStmt->execute([$name, $id])) {
         header("Location: view_category.php?msg=updated");
         exit();
     }
@@ -31,8 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_category'])) {
 
 // 3. Fetch categories for the table
 $categories = $pdo->query("SELECT * FROM categories ORDER BY category_name ASC")->fetchAll();
-
-// THE ERROR WAS HERE: I removed the duplicate execute() block that was causing the crash.
 ?>
 
 <script src="../javascript/toast.js"></script>
@@ -44,6 +42,12 @@ $categories = $pdo->query("SELECT * FROM categories ORDER BY category_name ASC")
 
 <?php if (isset($_GET['msg']) && $_GET['msg'] === 'deleted'): ?>
     <script>showToast("Category deleted successfully!", "success");</script>
+<?php endif; ?>
+
+<?php if (isset($error)): ?>
+<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+    <?= htmlspecialchars($error) ?>
+</div>
 <?php endif; ?>
 
 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
