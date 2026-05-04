@@ -2,44 +2,48 @@
 require '../config/db.php';
 include '../includes/header.php';
 
-// Handle Delete Logic
+// 1. Handle Delete Logic
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
     $stmt = $pdo->prepare("DELETE FROM categories WHERE category_id = ?");
-    try {
-        $stmt->execute([$id]);
-        header("Location: view_category.php?msg=deleted");
-        exit();
-    } catch (PDOException $e) {
-        $error = "Cannot delete category; it may be in use.";
+    if ($stmt) {
+        try {
+            $stmt->execute([$id]);
+            header("Location: view_category.php?msg=deleted");
+            exit();
+        } catch (PDOException $e) {
+            $error = "Cannot delete category; it may be in use.";
+        }
     }
 }
 
-// NEW: Handle Update Logic
+// 2. Handle Update Logic
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_category'])) {
     $id = $_POST['category_id'];
     $name = $_POST['category_name'];
     
     $stmt = $pdo->prepare("UPDATE categories SET category_name = ? WHERE category_id = ?");
-    if ($stmt->execute([$name, $id])) {
+    if ($stmt && $stmt->execute([$name, $id])) {
         header("Location: view_category.php?msg=updated");
         exit();
     }
 }
 
+// 3. Fetch categories for the table
 $categories = $pdo->query("SELECT * FROM categories ORDER BY category_name ASC")->fetchAll();
 
-if ($stmt->execute([$name, $id])) {
-    header("Location: view_category.php?msg=updated");
-    exit();
-}
-
+// THE ERROR WAS HERE: I removed the duplicate execute() block that was causing the crash.
 ?>
 
 <script src="../javascript/toast.js"></script>
 
+<!-- Toast Notifications -->
 <?php if (isset($_GET['msg']) && $_GET['msg'] === 'updated'): ?>
     <script>showToast("Category updated successfully!", "success");</script>
+<?php endif; ?>
+
+<?php if (isset($_GET['msg']) && $_GET['msg'] === 'deleted'): ?>
+    <script>showToast("Category deleted successfully!", "success");</script>
 <?php endif; ?>
 
 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -96,10 +100,11 @@ if ($stmt->execute([$name, $id])) {
     </table>
 </div>
 
+<!-- Edit Modal -->
 <div id="editModal" class="fixed inset-0 z-[150] hidden">
     <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-md" onclick="closeEditModal()"></div>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-4">
-        <form method="POST" class="bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in duration-200">
+        <form method="POST" class="bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 overflow-hidden">
             <input type="hidden" name="category_id" id="editCategoryId">
             <div class="p-10">
                 <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
@@ -123,10 +128,11 @@ if ($stmt->execute([$name, $id])) {
     </div>
 </div>
 
+<!-- Delete Modal -->
 <div id="deleteModal" class="fixed inset-0 z-[150] hidden">
     <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-md" onclick="closeDeleteModal()"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm p-4">
-        <div class="bg-white rounded-[2.5rem] shadow-2xl p-10 text-center animate-in fade-in zoom-in duration-200">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-sm p-4">
+        <div class="bg-white rounded-[2.5rem] shadow-2xl p-10 text-center">
             <div class="w-16 h-16 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
             </div>
