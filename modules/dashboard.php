@@ -3,7 +3,7 @@ require '../config/db.php';
 include '../includes/header.php';
 
 
-// --- CTE DATA FETCHING ---
+// CTE 
 $statsQuery = $pdo->query("
     WITH DashboardStats AS (
         SELECT 

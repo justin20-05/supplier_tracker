@@ -43,6 +43,7 @@ $statsStmt = $pdo->prepare("
             o.status
         FROM delivery_orders o
         WHERE o.expected_date BETWEEN :from_date AND :to_date
+          AND LOWER(o.status) IN ('pending', 'received', 'cancelled')
     ),
     order_rollups AS (
         SELECT
@@ -57,7 +58,7 @@ $statsStmt = $pdo->prepare("
     report_totals AS (
         SELECT
             COUNT(*) AS total_orders,
-            COALESCE(SUM(CASE WHEN LOWER(status) = 'received' THEN item_count ELSE 0 END), 0) AS items_received,
+            COALESCE(SUM(CASE WHEN LOWER(status) = 'received' THEN 1 ELSE 0 END), 0) AS items_received,
             COALESCE(SUM(CASE WHEN LOWER(status) = 'received' THEN order_value ELSE 0 END), 0) AS total_expenditure
         FROM order_rollups
     )
