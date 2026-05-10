@@ -233,10 +233,8 @@ include '../includes/header.php';
                     <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.22em] mb-3">Total Expenditure</p>
                     <h3 class="text-3xl font-black text-gray-950 tracking-tight">PHP <?= number_format($totalExpenditure, 2) ?></h3>
                 </div>
-                <div class="w-14 h-14 rounded-2xl bg-violet-50 text-violet-600 flex items-center justify-center">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-2.21 0-4 .895-4 2s1.79 2 4 2 4 .895 4 2-1.79 2-4 2m0-8V6m0 10v2m8-6a8 8 0 11-16 0 8 8 0 0116 0z" />
-                    </svg>
+                <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <span class="text-2xl font-bold">₱</span>
                 </div>
             </div>
         </div>
