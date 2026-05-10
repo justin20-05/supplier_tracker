@@ -10,11 +10,6 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-if (($_SESSION['role'] ?? 'Staff') !== 'Admin') {
-    header('Location: ../modules/dashboard.php');
-    exit();
-}
-
 function isValidReportDate($value)
 {
     $date = DateTime::createFromFormat('Y-m-d', $value);

@@ -108,15 +108,13 @@ if ($current_page === 'dashboard.php' && $user_role !== 'Admin') {
                         </a>
                     <?php endif; ?>
 
-                    <?php if ($user_role === 'Admin'): ?>
-                        <a href="../modules/reports.php"
-                            class="nav-link flex items-center gap-1.5 <?= ($current_page == 'reports.php') ? 'text-blue-600 nav-link-active' : 'text-gray-400 hover:text-gray-600' ?>">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M7 16V9m5 7V5m5 11v-4" />
-                            </svg>
-                            <span>Reports</span>
-                        </a>
-                    <?php endif; ?>
+                    <a href="../modules/reports.php"
+                        class="nav-link flex items-center gap-1.5 <?= ($current_page == 'reports.php') ? 'text-blue-600 nav-link-active' : 'text-gray-400 hover:text-gray-600' ?>">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M7 16V9m5 7V5m5 11v-4" />
+                        </svg>
+                        <span>Reports</span>
+                    </a>
                 </div>
             </div>
 
