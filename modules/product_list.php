@@ -30,9 +30,10 @@ $params = [];
 
 //  filters 
 if (!empty($search)) {
-    $query .= " AND (p.product_name LIKE :search OR p.product_code LIKE :search)";
-    $countQuery .= " AND (p.product_name LIKE :search OR p.product_code LIKE :search)";
-    $params[':search'] = "%$search%";
+    $query .= " AND (p.product_name LIKE :search_name OR p.product_code LIKE :search_code)";
+    $countQuery .= " AND (p.product_name LIKE :search_name OR p.product_code LIKE :search_code)";
+    $params[':search_name'] = "%$search%";
+    $params[':search_code'] = "%$search%";
 }
 
 if (!empty($supplier_id)) {

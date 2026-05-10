@@ -28,6 +28,7 @@ $totalValue = $pdo->query("
 
 $supplier_filter = $_GET['supplier_id'] ?? '';
 $status_filter   = $_GET['status'] ?? '';
+$order_search   = trim($_GET['order_id'] ?? '');
 
 // Fetch dropdown data
 $suppliers = $pdo->query("SELECT supplier_id, name FROM suppliers ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
@@ -43,6 +44,12 @@ $baseQuery = "FROM delivery_orders o
 $params = [];
 
 // Filters
+if (!empty($order_search)) {
+    $baseQuery .= " AND (LOWER(CONCAT('#ORD-', o.order_id)) LIKE ? OR CAST(o.order_id AS CHAR) LIKE ?)";
+    $params[] = "%" . strtolower($order_search) . "%";
+    $params[] = "%$order_search%";
+}
+
 if (!empty($supplier_filter)) {
     $baseQuery .= " AND o.supplier_id = ?";
     $params[] = $supplier_filter;
@@ -78,7 +85,7 @@ $stmt = $pdo->prepare($query);
 $stmt->execute($params);
 $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$hasFilters = $supplier_filter || $status_filter;
+$hasFilters = $supplier_filter || $status_filter || $order_search;
 ?>
 
 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -172,7 +179,13 @@ $hasFilters = $supplier_filter || $status_filter;
 </div>
 
 <form method="GET" action="order_list.php" class="bg-white p-4 rounded-lg shadow-sm border mb-6">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1 ml-1">Order ID</label>
+            <input type="text" name="order_id" value="<?= htmlspecialchars($order_search) ?>" placeholder="Search Order ID"
+                class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+        </div>
+
         <div>
             <label class="block text-xs font-semibold text-gray-500 uppercase mb-1 ml-1">Supplier</label>
             <select name="supplier_id" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-white font-medium text-gray-700">
