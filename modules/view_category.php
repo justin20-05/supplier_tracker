@@ -1,6 +1,5 @@
 <?php
 require '../config/db.php';
-include '../includes/header.php';
 
 // 1. Handle Delete Logic
 if (isset($_GET['delete'])) {
@@ -18,19 +17,27 @@ if (isset($_GET['delete'])) {
 }
 
 // 2. Handle Update Logic
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_category'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_category'], $_POST['category_id'], $_POST['category_name'])) {
     $id = $_POST['category_id'];
-    $name = $_POST['category_name'];
-    
-    $updateStmt = $pdo->prepare("UPDATE categories SET category_name = ? WHERE category_id = ?");
-    if ($updateStmt && $updateStmt->execute([$name, $id])) {
-        header("Location: view_category.php?msg=updated");
-        exit();
+    $name = trim($_POST['category_name']);
+
+    if ($name === '') {
+        $error = "Category name cannot be empty.";
+    } else {
+        $updateStmt = $pdo->prepare("UPDATE categories SET category_name = ? WHERE category_id = ?");
+        if ($updateStmt && $updateStmt->execute([$name, $id])) {
+            header("Location: view_category.php?msg=updated");
+            exit();
+        } else {
+            $error = "Unable to update category. Please try again.";
+        }
     }
 }
 
 // 3. Fetch categories for the table
 $categories = $pdo->query("SELECT * FROM categories ORDER BY category_name ASC")->fetchAll();
+
+include '../includes/header.php';
 ?>
 
 <script src="../javascript/toast.js"></script>
