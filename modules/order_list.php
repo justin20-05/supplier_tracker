@@ -31,7 +31,7 @@ $supplier_filter = $_GET['supplier_id'] ?? '';
 $status_filter   = $_GET['status'] ?? '';
 $order_search   = trim($_GET['order_id'] ?? '');
 
-// Subqueries
+// Subqueries 2
 $suppliers = $pdo->query("SELECT supplier_id, name FROM suppliers ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
 $statuses  = $pdo->query("SELECT DISTINCT status FROM delivery_orders ORDER BY status ASC")->fetchAll(PDO::FETCH_COLUMN);
 
