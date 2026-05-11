@@ -13,14 +13,15 @@ $name_filter = $_GET['name'] ?? '';
 
 $hasFilters = $search || $cat_filter || $name_filter;
 
+//Aggregations for dashboard cards
 $totalSuppliers = $pdo->query("SELECT COUNT(*) FROM suppliers")->fetchColumn();
 $activeCategories = $pdo->query("SELECT COUNT(DISTINCT category) FROM suppliers")->fetchColumn();
 
-// Fetch dropdown data
+// Subquery
 $categories = $pdo->query("SELECT category_name FROM categories ORDER BY category_name ASC")->fetchAll(PDO::FETCH_COLUMN);
 $names      = $pdo->query("SELECT DISTINCT name FROM suppliers ORDER BY name ASC")->fetchAll(PDO::FETCH_COLUMN);
 
-// Base query
+// Aggregation queries 
 $query = "SELECT s.* FROM suppliers s WHERE 1=1";
 $countQuery = "SELECT COUNT(*) FROM suppliers s WHERE 1=1";
 
@@ -46,7 +47,6 @@ if ($name_filter) {
     $params[] = $name_filter;
 }
 
-// ✅ COUNT QUERY
 $stmtCount = $pdo->prepare($countQuery);
 $stmtCount->execute($params);
 $totalRows = $stmtCount->fetchColumn();

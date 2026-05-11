@@ -12,15 +12,15 @@ $supplier_id = $_GET['supplier_id'] ?? '';
 $min_price = $_GET['min_price'] ?? '';
 $max_price = $_GET['max_price'] ?? '';
 
-// Fetch suppliers dropdown
+// Subqueries
 $suppliers = $pdo->query("SELECT supplier_id, name FROM suppliers ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
 
-// Base queries
+// Join Query
 $query = "SELECT p.*, s.name as supplier_name 
           FROM products p 
           LEFT JOIN suppliers s ON p.supplier_id = s.supplier_id 
           WHERE 1=1";
-
+//Aggregation with Join Query
 $countQuery = "SELECT COUNT(*) 
                FROM products p 
                LEFT JOIN suppliers s ON p.supplier_id = s.supplier_id 

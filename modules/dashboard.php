@@ -3,7 +3,7 @@ require '../config/db.php';
 include '../includes/header.php';
 
 
-// CTE 
+// CTE Query
 $statsQuery = $pdo->query("
     WITH DashboardStats AS (
         SELECT 
@@ -26,14 +26,13 @@ $productsCount = $stats['total_products'];
 $ordersCount = $stats['total_orders'];
 $totalRevenue = $stats['total_revenue'] ?: 0;
 
-
-// --- KEEPING EVERYTHING ELSE AS IS ---
+// Join Query
 $recentProducts = $pdo->query("SELECT p.product_name, s.name as supplier_name
                                FROM products p
                                LEFT JOIN suppliers s ON p.supplier_id = s.supplier_id
                                ORDER BY p.product_id DESC LIMIT 5")->fetchAll();
 
-
+// Aggregation with Join Query
 $productsPerSupplier = $pdo->query("SELECT s.name, COUNT(p.product_id) as total FROM suppliers s LEFT JOIN products p ON s.supplier_id = p.supplier_id GROUP BY s.supplier_id")->fetchAll();
 $supplierNamesJSON = json_encode(array_column($productsPerSupplier, 'name'));
 $supplierTotalsJSON = json_encode(array_column($productsPerSupplier, 'total'));

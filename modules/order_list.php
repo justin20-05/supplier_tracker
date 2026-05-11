@@ -7,6 +7,7 @@ $limit = 10;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
+//AGGREGATION QUERIES
 //For StatCards
 // Count Pending Orders
 $pendingOrders = $pdo->query("SELECT COUNT(*) FROM delivery_orders WHERE status = 'Pending'")->fetchColumn();
@@ -17,7 +18,7 @@ $cancelledOrders = $pdo->query("SELECT COUNT(*) FROM delivery_orders WHERE statu
 // Received Orders
 $receivedOrders = $pdo->query("SELECT COUNT(*) FROM delivery_orders WHERE status = 'Received'")->fetchColumn();
 
-//Sum for orders
+// Aggregation and Join Query
 $totalValue = $pdo->query("
     SELECT SUM(oi.quantity * oi.unit_price_at_order)
     FROM order_items oi
@@ -30,11 +31,11 @@ $supplier_filter = $_GET['supplier_id'] ?? '';
 $status_filter   = $_GET['status'] ?? '';
 $order_search   = trim($_GET['order_id'] ?? '');
 
-// Fetch dropdown data
+// Subqueries
 $suppliers = $pdo->query("SELECT supplier_id, name FROM suppliers ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
 $statuses  = $pdo->query("SELECT DISTINCT status FROM delivery_orders ORDER BY status ASC")->fetchAll(PDO::FETCH_COLUMN);
 
-// BASE QUERY
+// Join Query
 $baseQuery = "FROM delivery_orders o 
               LEFT JOIN suppliers s ON o.supplier_id = s.supplier_id 
               LEFT JOIN users u ON o.created_by = u.user_id

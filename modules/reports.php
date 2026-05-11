@@ -35,7 +35,7 @@ $dateParams = [
     ':from_date' => $fromDate,
     ':to_date' => $toDate,
 ];
-
+// CTE, AGGREGATION, JOIN QUERY
 $statsStmt = $pdo->prepare("
     WITH report_scope AS (
         SELECT
@@ -70,7 +70,7 @@ $stats = $statsStmt->fetch(PDO::FETCH_ASSOC) ?: [];
 $totalOrders = (int)($stats['total_orders'] ?? 0);
 $itemsReceived = (int)($stats['items_received'] ?? 0);
 $totalExpenditure = (float)($stats['total_expenditure'] ?? 0);
-
+// CTE, AGGREGATION, JOIN QUERY
 $performanceStmt = $pdo->prepare("
     WITH supplier_rollups AS (
         SELECT
